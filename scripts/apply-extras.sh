@@ -4,9 +4,9 @@
 #                   extras/ into the server's data/
 # ──────────────────────────────────────────────────
 # Run AFTER the server has started at least once
-# (so that ./data/world/ exists).
+# (so that ./data/world/ and default configs exist).
 #
-# Safe to re-run: uses cp -r (overwrites existing).
+# Safe to re-run.
 # ──────────────────────────────────────────────────
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -50,7 +50,27 @@ else
   echo "⚠️  No datapack/ found in extras — skipping."
 fi
 
-# ── 3. Summary ───────────────────────────────────
+# ── 3. Xaero Minimap/Worldmap config patching ────
+# Patches everyoneTracksEveryone to true WITHOUT
+# overwriting the rest of the default config.
+XAERO_FILES=("xaerominimap-common.txt" "xaeroworldmap-common.txt")
+for XFILE in "${XAERO_FILES[@]}"; do
+  TARGET="${DATA}/config/${XFILE}"
+  if [ -f "${TARGET}" ]; then
+    if grep -q "everyoneTracksEveryone" "${TARGET}"; then
+      sed -i 's/everyoneTracksEveryone:false/everyoneTracksEveryone:true/' "${TARGET}"
+      echo "🗺️  Patched ${XFILE} → everyoneTracksEveryone:true"
+    else
+      echo "everyoneTracksEveryone:true" >> "${TARGET}"
+      echo "🗺️  Appended everyoneTracksEveryone:true to ${XFILE}"
+    fi
+    APPLIED=$((APPLIED + 1))
+  else
+    echo "⚠️  ${XFILE} not found in ${DATA}/config/ — start server first to generate defaults."
+  fi
+done
+
+# ── 4. Summary ───────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════"
 if [ "${APPLIED}" -gt 0 ]; then
@@ -62,12 +82,3 @@ else
   echo "⚠️  Nothing was applied."
 fi
 echo "═══════════════════════════════════════"
-
-# ── Info: resourcepacks & shaderpacks ────────────
-if [ -d "${EXTRAS}/resourcepacks" ] || [ -d "${EXTRAS}/shaderpacks" ]; then
-  echo ""
-  echo "ℹ️  resourcepacks/ and shaderpacks/ are in extras/"
-  echo "   These are CLIENT-SIDE files."
-  echo "   Distribute them to players separately."
-  echo "   They are NOT applied to the server automatically."
-fi
