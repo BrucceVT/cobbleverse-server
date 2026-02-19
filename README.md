@@ -1,10 +1,10 @@
 # 🟢 Cobbleverse 1.7.3 — Deployment Guide
 
-Servidor de Minecraft con **Cobbleverse 1.7.3** (Modrinth) + 13 mods extra de servidor + configs/datapacks personalizados.
+Servidor de Minecraft con **Cobbleverse 1.7.3** (Modrinth) + 12 mods extra de servidor + configs/datapacks personalizados.
 
 ---
 
-## SECCIÓN A — Árbol del proyecto final
+## SECCIÓN A — Árbol del proyecto
 
 ```
 cobbleverse-server/
@@ -12,22 +12,22 @@ cobbleverse-server/
 ├── .env.example                   ← Plantilla de variables
 ├── .env                           ← Tu copia (NO va a git)
 ├── .gitignore
-├── README.md               ← Este documento
+├── README.md                      ← Este documento
+├── SETUP.md                       ← Instrucciones rápidas
 │
 ├── extras/
-│   ├── mods-urls.txt              ← 13 mods extra (URLs oficiales)
-│   ├── config/                    ← Configs del modpack (del zip)
-│   ├── datapack/                  ← Datapacks .zip (del zip)
-│   ├── resourcepacks/             ← Para distribución a jugadores
-│   └── shaderpacks/               ← Para distribución a jugadores
+│   ├── mods-urls.txt              ← 12 mods extra activos (URLs oficiales)
+│   ├── config/                    ← Configs del modpack (cobblemonraiddens, FancyMenu, etc.)
+│   └── datapack/                  ← Datapacks .zip
 │
 ├── scripts/
 │   ├── up.sh                      ← Arranca el servidor
 │   ├── down.sh                    ← Para el servidor
 │   ├── logs.sh                    ← Logs en tiempo real
-│   ├── status.sh                  ← Estado, salud, mods, datapacks
+│   ├── status.sh                  ← Estado, salud, recursos, mods, datapacks
 │   ├── backup.sh                  ← Backup comprimido con rotación
-│   └── apply-extras.sh            ← Copia config/ y datapacks a ./data
+│   ├── apply-extras.sh            ← Copia config/ y datapacks a ./data
+│   └── apply-xaero-config.sh     ← Parchea Xaero (everyone_tracks_everyone)
 │
 ├── data/                          ← Datos del servidor (persisten)
 └── backups/                       ← Backups generados
@@ -40,20 +40,21 @@ cobbleverse-server/
 ### `compose.yaml`
 
 - Imagen: `itzg/minecraft-server:java21`
-- Modpack: descargado desde URL directa del `.mrpack` (variable `MODPACK_URL`)
-- Mods extra: `MODS_FILE=/extras/mods-urls.txt` (13 URLs de Modrinth CDN)
+- Modpack: URL directa del `.mrpack` (variable `MODPACK_URL`)
+- Mods extra: `MODS_FILE=/extras/mods-urls.txt` (12 URLs activas de Modrinth CDN)
 - Volúmenes: `./data:/data` + `./extras:/extras:ro`
 - Health check: `mc-health` con 5 min de arranque
+- Aikar flags habilitados
 
 ### `.env.example`
 
 | Variable              | Default                                          | Descripción                    |
 | --------------------- | ------------------------------------------------ | ------------------------------ |
 | `MODPACK_URL`         | `https://cdn.modrinth.com/.../COBBLEVERSE...`    | URL del `.mrpack`              |
-| `MEMORY`              | `4G`                                             | RAM del servidor               |
+| `MEMORY`              | `16G`                                            | RAM (compose fallback: `8G`)   |
 | `SERVER_PORT`         | `25565`                                          | Puerto de juego                |
 | `RCON_PORT`           | `25575`                                          | Puerto RCON                    |
-| `RCON_PASSWORD`       | `changeme-rcon-password`                         | Contraseña RCON                |
+| `RCON_PASSWORD`       | *(vacío — configurar obligatorio)*               | Contraseña RCON                |
 | `MAX_PLAYERS`         | `20`                                             | Jugadores máximos              |
 | `VIEW_DISTANCE`       | `10`                                             | Chunks de renderizado          |
 | `SIMULATION_DISTANCE` | `8`                                              | Chunks de simulación           |
@@ -62,126 +63,78 @@ cobbleverse-server/
 | `OPS` / `WHITELIST`   | *(vacío)*                                        | Listas de jugadores            |
 | `TZ`                  | `America/Bogota`                                 | Zona horaria                   |
 
+> **Nota MEMORY:** compose tiene fallback `8G`. Para 10+ jugadores usar `16G` en `.env`.
+
 ### `extras/mods-urls.txt`
 
-13 mods server-side con URLs fijadas (Modrinth CDN):
+12 mods activos + 1 deshabilitado (CobbleStats):
 
-| Mod                           | Versión         |
-| ----------------------------- | --------------- |
-| Collective                    | 8.13            |
-| Oritech                       | 0.19.7          |
-| Refined Storage               | 2.0.0           |
-| Refined Storage REI           | 1.0.0           |
-| Gacha Machine                 | 2.0.2           |
-| Cobblemon Raid Dens           | 0.7.5+1.21.1    |
-| Cobbled Gacha                 | 2.1.1           |
-| Falling Tree                  | 1.21.1.11       |
-| TerraBlender                  | 4.1.0.8         |
-| Chipped                       | 4.0.2           |
-| Cobblemon Alphas              | 1.4.1           |
-| CobbleStats                   | 1.9.2+1.21.1    |
-| C2ME                          | 0.3.0+alpha     |
+| Mod                           | Versión         | Estado       |
+| ----------------------------- | --------------- | ------------ |
+| Collective                    | 8.13            | ✅ Activo    |
+| Oritech                       | 1.0.1           | ✅ Activo    |
+| Refined Storage               | 2.0.1           | ✅ Activo    |
+| Refined Storage REI           | 1.0.0           | ✅ Activo    |
+| Gacha Machine                 | 2.0.2           | ✅ Activo    |
+| Cobblemon Raid Dens           | 0.7.5+1.21.1    | ✅ Activo    |
+| Cobbled Gacha                 | 2.1.1           | ✅ Activo    |
+| Falling Tree                  | 1.21.1.11       | ✅ Activo    |
+| TerraBlender                  | 4.1.0.8         | ✅ Activo    |
+| Chipped                       | 4.0.2           | ✅ Activo    |
+| Cobblemon Alphas              | 1.4.1           | ✅ Activo    |
+| C2ME                          | 0.3.0+alpha     | ✅ Activo    |
+| CobbleStats                   | 1.8             | ❌ Disabled  |
 
 ### Scripts
 
-| Script               | Función                                                |
-| -------------------- | ------------------------------------------------------ |
-| `up.sh`              | `docker compose up -d`                                 |
-| `down.sh`            | `docker compose down`                                  |
-| `logs.sh`            | `docker compose logs -f --tail=N`                      |
-| `status.sh`          | Contenedor + salud + recursos + mods + datapacks       |
-| `backup.sh`          | Backup `tar.gz` con RCON save-off y rotación (5)       |
-| `apply-extras.sh`    | Copia `extras/config/` → `data/config/` y datapacks    |
+| Script                  | Función                                                |
+| ----------------------- | ------------------------------------------------------ |
+| `up.sh`                 | `docker compose up -d`                                 |
+| `down.sh`               | `docker compose down`                                  |
+| `logs.sh`               | `docker compose logs -f --tail=N`                      |
+| `status.sh`             | Contenedor + salud + recursos + mods + datapacks       |
+| `backup.sh`             | Backup `tar.gz` con RCON save-off y rotación (5)       |
+| `apply-extras.sh`       | Copia configs + datapacks + parchea Xaero              |
+| `apply-xaero-config.sh` | Parchea `everyone_tracks_everyone:true` en Xaero       |
 
 ---
 
-## SECCIÓN C — Prueba local paso a paso (Windows + Docker Desktop)
+## SECCIÓN C — Prueba local (Windows + Docker Desktop)
 
 ### Prerrequisitos
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo.
-- Git Bash o WSL.
-- El archivo `cobbleverse-extras.zip` disponible.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo
+- Git Bash o WSL
 
-### Paso 1: Extraer el ZIP a extras/
-
-```bash
-cd /d/Proyectos/Juegos/cobbleverse-server
-
-# Extraer el zip (sin sobreescribir mods-urls.txt)
-# El zip contiene: config/, datapack/, resourcepacks/, shaderpacks/
-unzip -o cobbleverse-extras.zip -d extras/
-
-# Si el zip contiene una carpeta mods/, ignorarla:
-# (los mods se descargan automáticamente desde mods-urls.txt)
-rm -rf extras/mods/
-```
-
-Verifica la estructura:
-```bash
-ls extras/
-# config/  datapack/  mods-urls.txt  resourcepacks/  shaderpacks/
-```
-
-### Paso 2: Preparar entorno
+### Pasos
 
 ```bash
+# 1. Configurar entorno
 cp .env.example .env
+# Editar .env — obligatorio: RCON_PASSWORD, ajustar MEMORY según tu PC
+
+# 2. Dar permisos a scripts
 chmod +x scripts/*.sh
-```
 
-### Paso 3: Verificar compose
-
-```bash
+# 3. Verificar compose
 docker compose config
-# Debe resolver sin errores
-```
 
-### Paso 4: Arrancar el servidor
-
-```bash
+# 4. Arrancar el servidor
 ./scripts/up.sh
 ./scripts/logs.sh
-# Esperar "Done!" (~5-10 min la primera vez)
-```
+# Esperar "Done!" (~5-10 min primera vez, descarga ~1 GB)
 
-### Paso 5: Aplicar configs y datapacks
-
-```bash
-# Una vez que el mundo existe (después de "Done!"):
+# 5. Aplicar configs, datapacks y Xaero
 ./scripts/apply-extras.sh
-```
 
-Salida esperada:
-```
-📁 Applying configs → ./data/config/
-📁 Applying datapacks → ./data/world/datapacks/
-✅ Applied 2 extra(s) to ./data/.
-   Restart the server to load changes:
-   ./scripts/down.sh && ./scripts/up.sh
-```
+# 6. Reiniciar para cargar cambios
+./scripts/down.sh && ./scripts/up.sh
 
-### Paso 6: Reiniciar para cargar cambios
-
-```bash
-./scripts/down.sh
-./scripts/up.sh
-./scripts/logs.sh
-```
-
-### Paso 7: Verificar
-
-```bash
-# Verificar mods instalados
+# 7. Verificar
 ./scripts/status.sh
-# Debe mostrar ~XX mods (modpack + 13 extras)
-
-# Verificar datapacks
 ls data/world/datapacks/
-# Debe mostrar los .zip copiados
-
-# Conectar desde Minecraft: localhost:25565
-# (Launcher con Cobbleverse 1.7.3 instalado)
+grep everyone_tracks data/config/xaero/lib/*.txt
+# Conectar: localhost:25565
 ```
 
 ### Troubleshooting
@@ -192,31 +145,33 @@ ls data/world/datapacks/
 | Descarga lenta la primera vez      | Normal (~1 GB entre modpack + mods)               |
 | `apply-extras.sh` dice "no world"  | Esperar a que el server genere el mundo primero    |
 | Mod no se descargó                 | Verificar URL en `extras/mods-urls.txt`           |
-| Out of memory                      | Reducir `MEMORY=2G` en `.env`                     |
+| Out of memory                      | Ajustar `MEMORY` en `.env`                        |
+| Xaero config not found             | Iniciar el server primero para generar defaults   |
 
 ---
 
-## SECCIÓN D — Entrega limpia para VPS
+## SECCIÓN D — Entrega para VPS
 
 ### SÍ se copian
 
-| Archivo/Carpeta            | Motivo                                    |
-| -------------------------- | ----------------------------------------- |
-| `compose.yaml`             | Definición del servicio                   |
-| `.env.example`             | Plantilla                                 |
-| `.gitignore`               | Exclusiones                               |
-| `README.md`         | Guía                                      |
-| `extras/`                  | Mods URLs + configs + datapacks           |
-| `scripts/`                 | Comandos operativos                       |
+| Archivo/Carpeta   | Motivo                          |
+| ----------------- | ------------------------------- |
+| `compose.yaml`    | Definición del servicio         |
+| `.env.example`    | Plantilla                       |
+| `.gitignore`      | Exclusiones                     |
+| `README.md`       | Guía                            |
+| `SETUP.md`        | Instrucciones rápidas           |
+| `extras/`         | Mods URLs + configs + datapacks |
+| `scripts/`        | Comandos operativos             |
 
 ### NO se copian
 
-| Archivo/Carpeta  | Motivo                                              |
-| ---------------- | --------------------------------------------------- |
-| `.env`           | Contiene secretos — se crea nuevo en el VPS         |
-| `data/`          | ~GB — datos del servidor, no versionable            |
-| `backups/`       | Locales, no relevantes para otro entorno            |
-| `*.zip` (fuente) | Ya extraído en `extras/`                            |
+| Archivo/Carpeta  | Motivo                                     |
+| ---------------- | ------------------------------------------ |
+| `.env`           | Contiene secretos — crear nuevo en VPS     |
+| `data/`          | ~GB — datos del servidor                   |
+| `backups/`       | Locales                                    |
+| `*.zip` (fuente) | Ya extraído en `extras/`                   |
 
 ### Git
 
@@ -264,7 +219,7 @@ nano .env
 
 Cambios recomendados:
 ```env
-MEMORY=6G
+MEMORY=16G
 RCON_PASSWORD=password-segura-produccion
 OPS=tu_username
 ```
@@ -296,7 +251,8 @@ chmod +x scripts/*.sh
 
 ```bash
 ./scripts/status.sh
-# Conectar desde Minecraft: IP_VPS:25565
+grep everyone_tracks data/config/xaero/lib/*.txt
+# Conectar: IP_VPS:25565
 ```
 
 ### 8. (Opcional) systemd
@@ -334,41 +290,31 @@ sudo systemctl enable cobbleverse
 
 ## SECCIÓN F — Notas de compatibilidad
 
-### Mods que pueden requerir cliente
+### Mods que requieren instalación en cliente
 
-Varios mods de la lista son `server + client` o solo `client`. Los mods del modpack base `.mrpack` se instalan automáticamente en el cliente desde el launcher (Modrinth / Prism Launcher).
-
-Para los **13 mods extra**, verificar en Modrinth la columna "Environment":
+Los 12 mods extra activos del servidor (excepto C2ME) también deben instalarse en el cliente de cada jugador:
 
 | Mod                    | Server | Client | Nota                                    |
 | ---------------------- | ------ | ------ | --------------------------------------- |
-| Collective             | ✅     | ✅     | Librería — también en cliente           |
-| Oritech                | ✅     | ✅     | Texturas/GUI — también en cliente       |
-| Refined Storage        | ✅     | ✅     | GUI — también en cliente                |
-| Refined Storage REI    | ✅     | ✅     | Integración REI — también en cliente    |
-| Gacha Machine          | ✅     | ✅     | GUI — también en cliente                |
-| Cobblemon Raid Dens    | ✅     | ✅     | Verificar en Modrinth                   |
-| Cobbled Gacha          | ✅     | ✅     | Verificar en Modrinth                   |
-| Falling Tree           | ✅     | ❓     | Solo server si no tiene animación       |
-| TerraBlender           | ✅     | ✅     | Librería — también en cliente           |
-| Chipped                | ✅     | ✅     | Texturas — también en cliente           |
-| Cobblemon Alphas       | ✅     | ✅     | Verificar en Modrinth                   |
-| CobbleStats            | ✅     | ❓     | Verificar en Modrinth                   |
+| Collective             | ✅     | ✅     | Librería                                |
+| Oritech                | ✅     | ✅     | Texturas/GUI                            |
+| Refined Storage        | ✅     | ✅     | GUI                                     |
+| Refined Storage REI    | ✅     | ✅     | Integración REI                         |
+| Gacha Machine          | ✅     | ✅     | GUI                                     |
+| Cobblemon Raid Dens    | ✅     | ✅     | Entidades                               |
+| Cobbled Gacha          | ✅     | ✅     | GUI                                     |
+| Falling Tree           | ✅     | ❓     | Posiblemente solo server                |
+| TerraBlender           | ✅     | ✅     | Librería                                |
+| Chipped                | ✅     | ✅     | Texturas                                |
+| Cobblemon Alphas       | ✅     | ✅     | Modelos                                 |
 | C2ME                   | ✅     | ❌     | Solo server (performance)               |
 
-> **Acción requerida**: Los mods marcados como `client` también deben ser instalados en el launcher de cada jugador. Distribuir los `.jar` o indicar a los jugadores que los descarguen desde Modrinth.
+### Xaero's Minimap/World Map
 
-### Resourcepacks y Shaderpacks
-
-Los archivos en `extras/resourcepacks/` y `extras/shaderpacks/` son **solo para clientes**:
-
-- **No se aplican automáticamente** al servidor.
-- Distribuirlos a los jugadores por:
-  1. **Google Drive / OneDrive** — compartir enlace.
-  2. **GitHub Releases** — adjuntar como assets.
-  3. **Instrucciones en Discord** — indicar dónde colocar los archivos.
-
-El jugador debe copiarlos a su carpeta `.minecraft/resourcepacks/` o `.minecraft/shaderpacks/` respectivamente.
+La opción `everyone_tracks_everyone:true` se aplica automáticamente via `apply-extras.sh` → `apply-xaero-config.sh`:
+- Ubicación nueva: `data/config/xaero/lib/*.txt`
+- Ubicación legacy: `data/config/xaerominimap-common.txt` / `xaeroworldmap-common.txt`
+- El script es idempotente y maneja ambas ubicaciones.
 
 ### Diagnosticar conflictos en logs
 
@@ -385,20 +331,14 @@ Patrones a buscar:
 # ❌ Versión incompatible
 "Mod X is not compatible with Minecraft Y"
 
-# ❌ Loader incorrecto
-"requires Quilt/Forge loader"
-
 # ⚠️ Mod duplicado
 "Duplicate mod: X"
-
-# ⚠️ Mod de cliente en servidor
-"is a client-side mod"
 
 # ✅ Éxito
 "Done (X.XXs)! For help, type"
 ```
 
-Para filtrar solo errores:
+Filtrar errores:
 ```bash
 docker compose logs | grep -iE "error|fail|crash|exception|incompatible"
 ```

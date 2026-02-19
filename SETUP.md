@@ -8,7 +8,8 @@
 # 1. Crear archivo de entorno
 cp .env.example .env
 
-# 2. Editar .env (mínimo configurar RCON_PASSWORD)
+# 2. Editar .env (obligatorio: RCON_PASSWORD, ajustar MEMORY)
+#    MEMORY: 8G para 1-5 jugadores, 16G para 10+
 nano .env   # o: code .env
 
 # 3. Dar permisos a scripts
@@ -19,10 +20,13 @@ chmod +x scripts/*.sh
 
 # 5. Seguir logs hasta ver "Done!"
 ./scripts/logs.sh
-#    Primera vez tarda ~5-10 min (descarga modpack + 13 mods, ~1 GB)
+#    Primera vez tarda ~5-10 min (descarga modpack + 12 mods, ~1 GB)
 
-# 6. Aplicar configs y datapacks al mundo
+# 6. Aplicar configs, datapacks y parche Xaero
 ./scripts/apply-extras.sh
+#    → Copia extras/config/ a data/config/
+#    → Copia extras/datapack/ a data/world/datapacks/
+#    → Parchea everyone_tracks_everyone:true en Xaero
 
 # 7. Reiniciar para que carguen los cambios
 ./scripts/down.sh && ./scripts/up.sh
@@ -31,11 +35,13 @@ chmod +x scripts/*.sh
 ### Operación diaria
 
 ```bash
-./scripts/up.sh        # Arrancar
-./scripts/down.sh      # Parar
-./scripts/logs.sh      # Ver logs (Ctrl+C para salir)
-./scripts/status.sh    # Estado, salud, mods, datapacks
-./scripts/backup.sh    # Backup comprimido (mantiene últimos 5)
+./scripts/up.sh                    # Arrancar
+./scripts/down.sh                  # Parar
+./scripts/logs.sh                  # Ver logs (Ctrl+C salir)
+./scripts/status.sh                # Estado, salud, mods, datapacks
+./scripts/backup.sh                # Backup comprimido (últimos 5)
+./scripts/apply-extras.sh          # Re-aplicar configs + datapacks + Xaero
+./scripts/apply-xaero-config.sh    # Solo parche Xaero (independiente)
 ```
 
 ### Si cambias configs en extras/
@@ -44,6 +50,14 @@ chmod +x scripts/*.sh
 ./scripts/down.sh
 ./scripts/apply-extras.sh
 ./scripts/up.sh
+```
+
+### Verificar Xaero
+
+```bash
+# Confirmar que el parche se aplicó
+grep everyone_tracks data/config/xaero/lib/*.txt
+# Debe mostrar: everyone_tracks_everyone:true
 ```
 
 ---
@@ -58,7 +72,7 @@ Instalar **Cobbleverse 1.7.3** desde Modrinth usando uno de:
 
 ### Mods extra (obligatorios en cliente)
 
-Los siguientes mods están en el servidor y **también deben instalarse en el cliente** para que funcionen correctamente. Descargarlos desde Modrinth y colocarlos en la carpeta `mods/` de la instancia del modpack:
+Los siguientes mods están en el servidor y **también deben instalarse en el cliente**. Descargarlos desde Modrinth y colocarlos en `mods/` de la instancia:
 
 | Mod | Versión | Link |
 |-----|---------|------|
@@ -73,21 +87,9 @@ Los siguientes mods están en el servidor y **también deben instalarse en el cl
 | TerraBlender | 4.1.0.8 | [Modrinth](https://modrinth.com/mod/terrablender) |
 | Chipped | 4.0.2 | [Modrinth](https://modrinth.com/mod/chipped) |
 | Cobblemon Alphas | 1.4.1 | [Modrinth](https://modrinth.com/mod/cobblemon-alphas) |
-| CobbleStats | 1.8 | [Modrinth](https://modrinth.com/mod/cobblestats) |
 
 > **C2ME** es solo server-side (performance), no se instala en cliente.
-
-### Resourcepacks (opcionales)
-
-Distribuir a jugadores por Discord, Drive, etc. Copiar a `.minecraft/resourcepacks/`:
-- Animon Voices (Ambient)
-- cobble_cats
-- Skins
-
-### Shaderpacks (opcionales)
-
-Copiar a `.minecraft/shaderpacks/`:
-- Photon v1.2a
+> **CobbleStats** está deshabilitado por incompatibilidad.
 
 ---
 
@@ -99,4 +101,7 @@ docker compose logs | grep -iE "error|fail|crash|incompatible"
 
 # Verificar mods cargados
 ./scripts/status.sh
+
+# Verificar datapacks
+ls data/world/datapacks/
 ```
