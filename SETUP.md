@@ -1,5 +1,22 @@
 # Cobbleverse 1.7.3 — Instrucciones de Setup
 
+## Prerrequisitos
+
+### Windows (local)
+1. Instalar [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+2. Abrirlo y esperar a que el motor Docker inicie (icono verde en bandeja)
+3. Git Bash o WSL disponible
+
+### Ubuntu VPS
+```bash
+sudo apt update && sudo apt upgrade -y
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER && newgrp docker
+docker --version && docker compose version
+```
+
+---
+
 ## Servidor (Local o VPS)
 
 ### Primera vez
