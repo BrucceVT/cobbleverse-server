@@ -1,36 +1,36 @@
 # 🟢 Cobbleverse 1.7.3 — Deployment Guide
 
-Servidor de Minecraft con el modpack **Cobbleverse 1.7.3** (Modrinth) usando Docker Compose.
-
-**Filosofía del proyecto:**
-* Cero trabajo manual
-* Cero redistribución de `.jar`
-* Reproducibilidad total
-* Local → VPS sin cambios de arquitectura
+Servidor de Minecraft con **Cobbleverse 1.7.3** (Modrinth) + 13 mods extra de servidor + configs/datapacks personalizados.
 
 ---
 
-## SECCIÓN A — Estructura final del proyecto
+## SECCIÓN A — Árbol del proyecto final
 
 ```
 cobbleverse-server/
-├── compose.yaml              ← Servicio Docker (itzg/minecraft-server)
-├── .env.example              ← Plantilla de variables de entorno
-├── .env                      ← Tu copia local (NO se sube a git)
-├── .gitignore                ← Exclusiones de git
-├── README.md                 ← Info general del repo
-├── README_DEPLOY.md          ← Este documento
+├── compose.yaml                   ← Servicio Docker
+├── .env.example                   ← Plantilla de variables
+├── .env                           ← Tu copia (NO va a git)
+├── .gitignore
+├── README.md               ← Este documento
+│
 ├── extras/
-│   ├── modrinth-mods.txt     ← Mods extra vía Modrinth (slugs)
-│   └── mods-urls.txt         ← Mods extra vía URLs directas
+│   ├── mods-urls.txt              ← 13 mods extra (URLs oficiales)
+│   ├── config/                    ← Configs del modpack (del zip)
+│   ├── datapack/                  ← Datapacks .zip (del zip)
+│   ├── resourcepacks/             ← Para distribución a jugadores
+│   └── shaderpacks/               ← Para distribución a jugadores
+│
 ├── scripts/
-│   ├── up.sh                 ← Arranca el servidor
-│   ├── down.sh               ← Para el servidor
-│   ├── logs.sh               ← Logs en tiempo real
-│   ├── status.sh             ← Estado, salud y recursos
-│   └── backup.sh             ← Backup comprimido con rotación
-├── data/                     ← Datos del servidor (mundo, mods, configs)
-└── backups/                  ← Backups generados automáticamente
+│   ├── up.sh                      ← Arranca el servidor
+│   ├── down.sh                    ← Para el servidor
+│   ├── logs.sh                    ← Logs en tiempo real
+│   ├── status.sh                  ← Estado, salud, mods, datapacks
+│   ├── backup.sh                  ← Backup comprimido con rotación
+│   └── apply-extras.sh            ← Copia config/ y datapacks a ./data
+│
+├── data/                          ← Datos del servidor (persisten)
+└── backups/                       ← Backups generados
 ```
 
 ---
@@ -39,191 +39,214 @@ cobbleverse-server/
 
 ### `compose.yaml`
 
-Servicio único `mc` basado en `itzg/minecraft-server:java21`:
-- **Modpack**: se descarga automáticamente desde la URL directa del `.mrpack`.
-- **Mods extra (Modrinth)**: lee `extras/modrinth-mods.txt` montado en `/extras`.
-- **Mods extra (URLs)**: lee `extras/mods-urls.txt` montado en `/extras`.
-- **Persistencia**: `./data` → `/data`.
-- **Health check**: `mc-health` con periodo de arranque de 5 min.
-- Todas las configuraciones se inyectan desde `.env`.
+- Imagen: `itzg/minecraft-server:java21`
+- Modpack: descargado desde URL directa del `.mrpack` (variable `MODPACK_URL`)
+- Mods extra: `MODS_FILE=/extras/mods-urls.txt` (13 URLs de Modrinth CDN)
+- Volúmenes: `./data:/data` + `./extras:/extras:ro`
+- Health check: `mc-health` con 5 min de arranque
 
 ### `.env.example`
 
-| Variable              | Default                                         | Descripción                       |
-| --------------------- | ----------------------------------------------- | --------------------------------- |
-| `MODPACK_URL`         | `https://cdn.modrinth.com/.../COBBLEVERSE...`   | URL directa del `.mrpack`        |
-| `MEMORY`              | `4G`                                            | RAM del servidor                  |
-| `SERVER_PORT`         | `25565`                                         | Puerto de juego (host)            |
-| `RCON_PORT`           | `25575`                                         | Puerto RCON (host)                |
-| `RCON_PASSWORD`       | `changeme-rcon-password`                        | Contraseña RCON                   |
-| `MAX_PLAYERS`         | `20`                                            | Jugadores máximos                 |
-| `MOTD`                | `§6Cobbleverse §7— §aCatch them all!`          | Mensaje del servidor              |
-| `DIFFICULTY`          | `normal`                                        | Dificultad                        |
-| `MODE`                | `survival`                                      | Modo de juego                     |
-| `VIEW_DISTANCE`       | `10`                                            | Chunks de renderizado             |
-| `SIMULATION_DISTANCE` | `8`                                             | Chunks de simulación              |
-| `ONLINE_MODE`         | `true`                                          | Verificación Mojang               |
-| `WHITELIST`           | *(vacío)*                                       | Jugadores permitidos (comas)      |
-| `OPS`                 | *(vacío)*                                       | Operadores (comas)                |
-| `MC_IMAGE_TAG`        | `java21`                                        | Tag de la imagen Docker           |
-| `TZ`                  | `America/Bogota`                                | Zona horaria                      |
-
-### `extras/modrinth-mods.txt`
-
-Archivo de texto con un slug de Modrinth por línea. Soporta versionado:
-```
-chunky:1.4.16
-ledger
-spark:1.10.73
-```
+| Variable              | Default                                          | Descripción                    |
+| --------------------- | ------------------------------------------------ | ------------------------------ |
+| `MODPACK_URL`         | `https://cdn.modrinth.com/.../COBBLEVERSE...`    | URL del `.mrpack`              |
+| `MEMORY`              | `4G`                                             | RAM del servidor               |
+| `SERVER_PORT`         | `25565`                                          | Puerto de juego                |
+| `RCON_PORT`           | `25575`                                          | Puerto RCON                    |
+| `RCON_PASSWORD`       | `changeme-rcon-password`                         | Contraseña RCON                |
+| `MAX_PLAYERS`         | `20`                                             | Jugadores máximos              |
+| `VIEW_DISTANCE`       | `10`                                             | Chunks de renderizado          |
+| `SIMULATION_DISTANCE` | `8`                                              | Chunks de simulación           |
+| `LEVEL`               | `world`                                          | Nombre del mundo               |
+| `ONLINE_MODE`         | `true`                                           | Verificación Mojang            |
+| `OPS` / `WHITELIST`   | *(vacío)*                                        | Listas de jugadores            |
+| `TZ`                  | `America/Bogota`                                 | Zona horaria                   |
 
 ### `extras/mods-urls.txt`
 
-Archivo de texto con una URL directa por línea (para mods fuera de Modrinth):
-```
-https://github.com/author/mod/releases/download/v1.0.0/mod-1.0.0.jar
-```
+13 mods server-side con URLs fijadas (Modrinth CDN):
+
+| Mod                           | Versión         |
+| ----------------------------- | --------------- |
+| Collective                    | 8.13            |
+| Oritech                       | 0.19.7          |
+| Refined Storage               | 2.0.0           |
+| Refined Storage REI           | 1.0.0           |
+| Gacha Machine                 | 2.0.2           |
+| Cobblemon Raid Dens           | 0.7.5+1.21.1    |
+| Cobbled Gacha                 | 2.1.1           |
+| Falling Tree                  | 1.21.1.11       |
+| TerraBlender                  | 4.1.0.8         |
+| Chipped                       | 4.0.2           |
+| Cobblemon Alphas              | 1.4.1           |
+| CobbleStats                   | 1.9.2+1.21.1    |
+| C2ME                          | 0.3.0+alpha     |
 
 ### Scripts
 
-| Script           | Función                                              |
-| ---------------- | ---------------------------------------------------- |
-| `scripts/up.sh`  | `docker compose up -d` + mensajes de ayuda           |
-| `scripts/down.sh`| `docker compose down` (parada limpia)                |
-| `scripts/logs.sh`| `docker compose logs -f --tail=N` (default 100)      |
-| `scripts/status.sh` | Estado del contenedor, salud, recursos y mods     |
-| `scripts/backup.sh` | Backup `tar.gz` con RCON save-off y rotación (5)  |
+| Script               | Función                                                |
+| -------------------- | ------------------------------------------------------ |
+| `up.sh`              | `docker compose up -d`                                 |
+| `down.sh`            | `docker compose down`                                  |
+| `logs.sh`            | `docker compose logs -f --tail=N`                      |
+| `status.sh`          | Contenedor + salud + recursos + mods + datapacks       |
+| `backup.sh`          | Backup `tar.gz` con RCON save-off y rotación (5)       |
+| `apply-extras.sh`    | Copia `extras/config/` → `data/config/` y datapacks    |
 
 ---
 
 ## SECCIÓN C — Prueba local paso a paso (Windows + Docker Desktop)
 
 ### Prerrequisitos
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo.
-- Git Bash o WSL para ejecutar scripts `.sh`.
-- Launcher de Minecraft con Cobbleverse 1.7.3 instalado (para conectar al servidor).
 
-### Pasos
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo.
+- Git Bash o WSL.
+- El archivo `cobbleverse-extras.zip` disponible.
+
+### Paso 1: Extraer el ZIP a extras/
 
 ```bash
-# 1. Ir al directorio del proyecto
 cd /d/Proyectos/Juegos/cobbleverse-server
 
-# 2. Crear .env desde la plantilla
-cp .env.example .env
+# Extraer el zip (sin sobreescribir mods-urls.txt)
+# El zip contiene: config/, datapack/, resourcepacks/, shaderpacks/
+unzip -o cobbleverse-extras.zip -d extras/
 
-# 3. (Opcional) Editar .env — defaults están bien para local
-#    code .env
-
-# 4. Dar permisos de ejecución (solo una vez)
-chmod +x scripts/*.sh
-
-# 5. Verificar que compose resuelve correctamente
-docker compose config
-
-# 6. Arrancar el servidor
-./scripts/up.sh
-
-# 7. Ver logs (primera vez tarda ~5-10 min descargando modpack)
-./scripts/logs.sh
-
-# 8. Esperar "Done!" en los logs → servidor listo
-
-# 9. Conectar desde Minecraft: localhost:25565
-
-# 10. Verificar estado
-./scripts/status.sh
+# Si el zip contiene una carpeta mods/, ignorarla:
+# (los mods se descargan automáticamente desde mods-urls.txt)
+rm -rf extras/mods/
 ```
 
-### Verificación post-arranque
+Verifica la estructura:
+```bash
+ls extras/
+# config/  datapack/  mods-urls.txt  resourcepacks/  shaderpacks/
+```
+
+### Paso 2: Preparar entorno
 
 ```bash
-# Verificar que el .mrpack se instaló
-ls data/mods/
-# Debe mostrar docenas de archivos .jar (los mods del modpack)
-
-# Verificar mods extra de extras/modrinth-mods.txt
-# (solo si descomentaste algún mod)
-./scripts/logs.sh 50
-# Buscar líneas como: "Downloading modrinth project chunky"
-
-# Hacer un backup de prueba
-./scripts/backup.sh
-
-# Parar el servidor
-./scripts/down.sh
-
-# Verificar que los datos persisten
-ls data/world/
-# Debe existir si entraste al mundo
+cp .env.example .env
+chmod +x scripts/*.sh
 ```
 
-### Troubleshooting local
+### Paso 3: Verificar compose
 
-| Problema                        | Solución                                          |
-| ------------------------------- | ------------------------------------------------- |
-| Puerto 25565 ocupado            | Cambiar `SERVER_PORT` en `.env`                   |
-| Se queda en "Starting…" mucho   | Normal la primera vez (descarga ~1 GB)            |
-| `docker compose` no encontrado  | Actualizar Docker Desktop                         |
-| Out of memory                   | Reducir `MEMORY=2G` en `.env`                     |
-| Mod no se descargó              | Verificar slug en modrinth.com y compatibilidad   |
+```bash
+docker compose config
+# Debe resolver sin errores
+```
+
+### Paso 4: Arrancar el servidor
+
+```bash
+./scripts/up.sh
+./scripts/logs.sh
+# Esperar "Done!" (~5-10 min la primera vez)
+```
+
+### Paso 5: Aplicar configs y datapacks
+
+```bash
+# Una vez que el mundo existe (después de "Done!"):
+./scripts/apply-extras.sh
+```
+
+Salida esperada:
+```
+📁 Applying configs → ./data/config/
+📁 Applying datapacks → ./data/world/datapacks/
+✅ Applied 2 extra(s) to ./data/.
+   Restart the server to load changes:
+   ./scripts/down.sh && ./scripts/up.sh
+```
+
+### Paso 6: Reiniciar para cargar cambios
+
+```bash
+./scripts/down.sh
+./scripts/up.sh
+./scripts/logs.sh
+```
+
+### Paso 7: Verificar
+
+```bash
+# Verificar mods instalados
+./scripts/status.sh
+# Debe mostrar ~XX mods (modpack + 13 extras)
+
+# Verificar datapacks
+ls data/world/datapacks/
+# Debe mostrar los .zip copiados
+
+# Conectar desde Minecraft: localhost:25565
+# (Launcher con Cobbleverse 1.7.3 instalado)
+```
+
+### Troubleshooting
+
+| Problema                           | Solución                                          |
+| ---------------------------------- | ------------------------------------------------- |
+| Puerto 25565 ocupado               | Cambiar `SERVER_PORT` en `.env`                   |
+| Descarga lenta la primera vez      | Normal (~1 GB entre modpack + mods)               |
+| `apply-extras.sh` dice "no world"  | Esperar a que el server genere el mundo primero    |
+| Mod no se descargó                 | Verificar URL en `extras/mods-urls.txt`           |
+| Out of memory                      | Reducir `MEMORY=2G` en `.env`                     |
 
 ---
 
 ## SECCIÓN D — Entrega limpia para VPS
 
-### Archivos que SÍ se copian
+### SÍ se copian
 
 | Archivo/Carpeta            | Motivo                                    |
 | -------------------------- | ----------------------------------------- |
 | `compose.yaml`             | Definición del servicio                   |
-| `.env.example`             | Plantilla de configuración                |
+| `.env.example`             | Plantilla                                 |
 | `.gitignore`               | Exclusiones                               |
-| `README.md`                | Documentación general                     |
-| `README_DEPLOY.md`         | Guía de despliegue                        |
-| `extras/`                  | Listas de mods extra                      |
+| `README.md`         | Guía                                      |
+| `extras/`                  | Mods URLs + configs + datapacks           |
 | `scripts/`                 | Comandos operativos                       |
 
-### Archivos que NO se copian
+### NO se copian
 
-| Archivo/Carpeta | Motivo                                              |
-| --------------- | --------------------------------------------------- |
-| `.env`          | Contiene secretos — se crea nuevo en cada entorno   |
-| `data/`         | Datos del servidor — ~GB de tamaño, no versionable  |
-| `backups/`      | Backups locales — no relevantes para otro entorno   |
+| Archivo/Carpeta  | Motivo                                              |
+| ---------------- | --------------------------------------------------- |
+| `.env`           | Contiene secretos — se crea nuevo en el VPS         |
+| `data/`          | ~GB — datos del servidor, no versionable            |
+| `backups/`       | Locales, no relevantes para otro entorno            |
+| `*.zip` (fuente) | Ya extraído en `extras/`                            |
 
-### Método 1: Git (recomendado)
+### Git
 
 ```bash
-# En local
-cd /d/Proyectos/Juegos/cobbleverse-server
 git init && git add -A && git commit -m "Cobbleverse 1.7.3 — Docker setup"
 git remote add origin git@github.com:TU_USUARIO/cobbleverse-server.git
 git push -u origin main
 ```
 
-### Método 2: rsync directo
+### rsync (alternativa)
 
 ```bash
 rsync -avz --exclude='data/' --exclude='backups/' --exclude='.env' \
-  ./ usuario@tu-vps:/opt/cobbleverse-server/
+  ./ usuario@vps:/opt/cobbleverse-server/
 ```
 
 ---
 
-## SECCIÓN E — Despliegue en VPS (Ubuntu 22.04 / 24.04)
+## SECCIÓN E — Despliegue en VPS (Ubuntu)
 
-### 1. Instalar Docker
+### 1. Docker
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 curl -fsSL https://get.docker.com | sudo sh
-sudo usermod -aG docker $USER
-newgrp docker
+sudo usermod -aG docker $USER && newgrp docker
 docker --version && docker compose version
 ```
 
-### 2. Clonar el proyecto
+### 2. Proyecto
 
 ```bash
 cd /opt
@@ -232,28 +255,25 @@ git clone git@github.com:TU_USUARIO/cobbleverse-server.git cobbleverse-server
 cd cobbleverse-server
 ```
 
-### 3. Configurar entorno producción
+### 3. Configurar
 
 ```bash
 cp .env.example .env
 nano .env
 ```
 
-Cambios típicos para VPS:
+Cambios recomendados:
 ```env
 MEMORY=6G
-RCON_PASSWORD=una-password-segura-de-produccion
+RCON_PASSWORD=password-segura-produccion
 OPS=tu_username
-MOTD=§6Cobbleverse §7— §bProduction
 ```
 
 ### 4. Firewall
 
 ```bash
 sudo ufw allow 25565/tcp
-# NO abrir RCON (25575) a internet — solo acceso local
 sudo ufw enable
-sudo ufw status
 ```
 
 ### 5. Arrancar
@@ -262,19 +282,24 @@ sudo ufw status
 chmod +x scripts/*.sh
 ./scripts/up.sh
 ./scripts/logs.sh
-# Esperar "Done!" en logs
+# Esperar "Done!"
 ```
 
-### 6. Verificación externa
+### 6. Aplicar extras
 
 ```bash
-# Desde otra máquina:
-# 1. Abrir Minecraft con Cobbleverse 1.7.3
-# 2. Agregar servidor: IP_VPS:25565
-# 3. Conectar y verificar que el mundo carga con mods
+./scripts/apply-extras.sh
+./scripts/down.sh && ./scripts/up.sh
 ```
 
-### 7. (Opcional) Arranque automático con systemd
+### 7. Verificar
+
+```bash
+./scripts/status.sh
+# Conectar desde Minecraft: IP_VPS:25565
+```
+
+### 8. (Opcional) systemd
 
 ```bash
 sudo tee /etc/systemd/system/cobbleverse.service > /dev/null <<'EOF'
@@ -297,10 +322,9 @@ EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable cobbleverse
-sudo systemctl start cobbleverse
 ```
 
-### 8. (Opcional) Backup automático con cron
+### 9. (Opcional) Cron de backup
 
 ```bash
 (crontab -l 2>/dev/null; echo "0 4 * * * /opt/cobbleverse-server/scripts/backup.sh >> /var/log/cobbleverse-backup.log 2>&1") | crontab -
@@ -308,102 +332,73 @@ sudo systemctl start cobbleverse
 
 ---
 
-## SECCIÓN F — Gestión reproducible de mods extra (server-side)
+## SECCIÓN F — Notas de compatibilidad
 
-### Dos mecanismos disponibles
+### Mods que pueden requerir cliente
 
-| Mecanismo                        | Archivo                        | Cuándo usar                                |
-| -------------------------------- | ------------------------------ | ------------------------------------------ |
-| **Modrinth slugs**               | `extras/modrinth-mods.txt`     | Mod disponible en Modrinth (preferido)     |
-| **URLs directas**                | `extras/mods-urls.txt`         | Mod no disponible en Modrinth              |
+Varios mods de la lista son `server + client` o solo `client`. Los mods del modpack base `.mrpack` se instalan automáticamente en el cliente desde el launcher (Modrinth / Prism Launcher).
 
-### Cómo agregar un mod
+Para los **13 mods extra**, verificar en Modrinth la columna "Environment":
 
-**Opción A — Mod en Modrinth:**
+| Mod                    | Server | Client | Nota                                    |
+| ---------------------- | ------ | ------ | --------------------------------------- |
+| Collective             | ✅     | ✅     | Librería — también en cliente           |
+| Oritech                | ✅     | ✅     | Texturas/GUI — también en cliente       |
+| Refined Storage        | ✅     | ✅     | GUI — también en cliente                |
+| Refined Storage REI    | ✅     | ✅     | Integración REI — también en cliente    |
+| Gacha Machine          | ✅     | ✅     | GUI — también en cliente                |
+| Cobblemon Raid Dens    | ✅     | ✅     | Verificar en Modrinth                   |
+| Cobbled Gacha          | ✅     | ✅     | Verificar en Modrinth                   |
+| Falling Tree           | ✅     | ❓     | Solo server si no tiene animación       |
+| TerraBlender           | ✅     | ✅     | Librería — también en cliente           |
+| Chipped                | ✅     | ✅     | Texturas — también en cliente           |
+| Cobblemon Alphas       | ✅     | ✅     | Verificar en Modrinth                   |
+| CobbleStats            | ✅     | ❓     | Verificar en Modrinth                   |
+| C2ME                   | ✅     | ❌     | Solo server (performance)               |
 
-1. Buscar el mod en [modrinth.com](https://modrinth.com).
-2. Copiar el slug de la URL (ejemplo: `modrinth.com/mod/chunky` → slug: `chunky`).
-3. Agregar al archivo `extras/modrinth-mods.txt`:
-   ```
-   chunky
-   ```
-4. Reiniciar: `./scripts/down.sh && ./scripts/up.sh`
+> **Acción requerida**: Los mods marcados como `client` también deben ser instalados en el launcher de cada jugador. Distribuir los `.jar` o indicar a los jugadores que los descarguen desde Modrinth.
 
-**Opción B — Mod fuera de Modrinth:**
+### Resourcepacks y Shaderpacks
 
-1. Obtener la URL directa al `.jar` (GitHub Releases, sitio oficial).
-2. Agregar al archivo `extras/mods-urls.txt`:
-   ```
-   https://github.com/author/mod/releases/download/v1.0.0/mod-1.0.0.jar
-   ```
-3. Reiniciar: `./scripts/down.sh && ./scripts/up.sh`
+Los archivos en `extras/resourcepacks/` y `extras/shaderpacks/` son **solo para clientes**:
 
-### Cómo fijar versiones (reproducibilidad)
+- **No se aplican automáticamente** al servidor.
+- Distribuirlos a los jugadores por:
+  1. **Google Drive / OneDrive** — compartir enlace.
+  2. **GitHub Releases** — adjuntar como assets.
+  3. **Instrucciones en Discord** — indicar dónde colocar los archivos.
 
-**Modrinth** — usar `slug:version_number`:
-```
-chunky:1.4.16
-spark:1.10.73
-```
+El jugador debe copiarlos a su carpeta `.minecraft/resourcepacks/` o `.minecraft/shaderpacks/` respectivamente.
 
-Sin versión fijada, siempre descarga la última release compatible. Esto puede romper cosas entre actualizaciones.
-
-**URLs directas** — usar URLs versionadas:
-```
-# ✅ Versionado (reproducible)
-https://github.com/author/mod/releases/download/v1.0.0/mod-1.0.0.jar
-
-# ❌ Sin versión (no reproducible)
-https://example.com/mod-latest.jar
-```
-
-### Cómo quitar un mod
-
-1. Eliminar o comentar la línea en `extras/modrinth-mods.txt` o `extras/mods-urls.txt`.
-2. **Eliminar manualmente** el `.jar` correspondiente de `./data/mods/`:
-   ```bash
-   rm ./data/mods/nombre-del-mod-*.jar
-   ```
-3. Reiniciar: `./scripts/down.sh && ./scripts/up.sh`
-
-> **¿Por qué hay que borrar el .jar manualmente?**
-> El contenedor descarga mods solo una vez. Si el `.jar` ya existe en `./data/mods/`, no se re-descarga ni se elimina automáticamente al quitar la entrada del archivo.
-
-### Cómo detectar conflictos en logs
+### Diagnosticar conflictos en logs
 
 ```bash
-./scripts/logs.sh 200
+./scripts/logs.sh 300
 ```
 
-Buscar patrones como:
+Patrones a buscar:
+
+```bash
+# ❌ Dependencia faltante
+"requires mod X version >= Y"
+
+# ❌ Versión incompatible
+"Mod X is not compatible with Minecraft Y"
+
+# ❌ Loader incorrecto
+"requires Quilt/Forge loader"
+
+# ⚠️ Mod duplicado
+"Duplicate mod: X"
+
+# ⚠️ Mod de cliente en servidor
+"is a client-side mod"
+
+# ✅ Éxito
+"Done (X.XXs)! For help, type"
 ```
-# Error de compatibilidad entre mods
-ERROR: Mod X requires Y version >= 2.0, but found 1.5
 
-# Mod que requiere otro loader
-ERROR: Mod X requires Quilt loader
-
-# Mod que requiere cliente
-WARN: Mod X is a client-side mod and will be ignored
-
-# Mod duplicado
-WARN: Duplicate mod: X found in multiple locations
-```
-
-### ¿Qué hacer si un mod requiere cliente?
-
-Los mods server-side se listan en `extras/`. Si un mod requiere instalación en el cliente:
-
-1. **No lo agregues** a `extras/`. No sirve en el servidor.
-2. El mod debe instalarse en el **launcher del cliente** (como parte del modpack o manualmente).
-3. Revisa la página del mod en Modrinth → pestaña "Environment" para ver si es `server`, `client`, o `both`.
-
-### Resumen del flujo
-
-```
-1. Editar extras/modrinth-mods.txt o extras/mods-urls.txt
-2. ./scripts/down.sh
-3. ./scripts/up.sh
-4. ./scripts/logs.sh  → verificar descarga sin errores
-5. ./scripts/status.sh → verificar mod count
+Para filtrar solo errores:
+```bash
+docker compose logs | grep -iE "error|fail|crash|exception|incompatible"
 ```

@@ -33,7 +33,7 @@ tar -czf "${BACKUP_DIR}/${FILENAME}" ./data
 # Resume auto-save
 docker compose exec -T mc rcon-cli save-on 2>/dev/null || true
 
-# Prune old backups — keep only the latest $KEEP
+# Prune old backups
 cd "${BACKUP_DIR}"
 TOTAL=$(ls -1t cobbleverse_backup_*.tar.gz 2>/dev/null | wc -l)
 if [ "${TOTAL}" -gt "${KEEP}" ]; then

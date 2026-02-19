@@ -17,12 +17,8 @@ services:
       MODRINTH_MODPACK: ${MODPACK_URL}
       VERSION: LATEST
 
-      # ── Extra mods (Modrinth) ─────────────────
-      # File mounted from ./extras — one slug per line.
-      MODRINTH_PROJECTS: "@/extras/modrinth-mods.txt"
-
       # ── Extra mods (direct URLs) ──────────────
-      # File mounted from ./extras — one URL per line.
+      # Reads /extras/mods-urls.txt — one URL per line.
       MODS_FILE: /extras/mods-urls.txt
 
       # ── Resources ─────────────────────────────

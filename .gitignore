@@ -7,6 +7,9 @@ backups/
 # Environment secrets
 .env
 
+# Source zip (already extracted into extras/)
+cobbleverse-extras.zip
+
 # OS / IDE
 .DS_Store
 Thumbs.db

@@ -1,16 +1,48 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-#  Cobbleverse — Extra Mods from Direct URLs
+#  Cobbleverse — Extra Server-Side Mods (Direct URLs)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Use this file for mods NOT available on Modrinth.
-# One direct download URL per line (.jar files).
+# One direct download URL per line (.jar).
+# Lines starting with # are comments. Blank lines ignored.
 #
-# Lines starting with # are comments. Blank lines are ignored.
-#
-# IMPORTANT:
-#   - Use only official download URLs (author sites, GitHub releases).
-#   - Never commit .jar files to the repository.
-#   - Pin to specific versions by using versioned URLs.
+# ALL URLs are official Modrinth CDN links.
+# Pin versions by using exact versioned URLs.
 # ──────────────────────────────────────────────────────
 
-# Example (uncomment to enable):
-# https://github.com/author/mod/releases/download/v1.0.0/mod-1.0.0.jar
+# Collective (dependency)
+https://cdn.modrinth.com/data/e0M1UDsY/versions/VTg6femX/collective-1.21.1-8.13.jar
+
+# Oritech
+https://cdn.modrinth.com/data/4sYI62kA/versions/vAIUyVvQ/oritech-fabric-1.21.1-0.19.7.jar
+
+# Refined Storage
+https://cdn.modrinth.com/data/KDvYkUg3/versions/rfFqJDcN/refinedstorage-fabric-2.0.0.jar
+
+# Refined Storage — REI Integration
+https://cdn.modrinth.com/data/RGAJWsc3/versions/LSiWqkiI/refinedstorage-rei-integration-fabric-1.0.0.jar
+
+# Gacha Machine
+https://cdn.modrinth.com/data/67dS28p4/versions/zJyIPRC7/gachamachine-fabric-1.21.1-2.0.2.jar
+
+# Cobblemon Raid Dens
+https://cdn.modrinth.com/data/GebWh45l/versions/xZRAPcNT/cobblemonraiddens-fabric-0.7.5%2B1.21.1.jar
+
+# Cobbled Gacha
+https://cdn.modrinth.com/data/c1OpnQs3/versions/SIP7HCST/cobbledgacha-fabric-1.21.1-2.1.1.jar
+
+# Falling Tree
+https://cdn.modrinth.com/data/Fb4jn8m6/versions/wxGXaJMA/FallingTree-1.21.1-1.21.1.11.jar
+
+# TerraBlender
+https://cdn.modrinth.com/data/kkmrDlKT/versions/XNtIBXyQ/TerraBlender-fabric-1.21.1-4.1.0.8.jar
+
+# Chipped
+https://cdn.modrinth.com/data/BAscRYKm/versions/6h2mVZcb/chipped-fabric-1.21.1-4.0.2.jar
+
+# Cobblemon Alphas
+https://cdn.modrinth.com/data/QnWyhFGf/versions/wVSPSTdd/cobblemonalphas-1.4.1.jar
+
+# CobbleStats
+https://cdn.modrinth.com/data/jlXFcQk4/versions/uxsx4bK4/cobblestats-fabric-1.9.2%2B1.21.1.jar
+
+# C2ME (performance)
+https://cdn.modrinth.com/data/VSNURh3q/versions/DSqOVCaF/c2me-fabric-mc1.21.1-0.3.0%2Balpha.0.362.jar
