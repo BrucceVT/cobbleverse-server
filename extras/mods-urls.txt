@@ -12,10 +12,10 @@
 https://cdn.modrinth.com/data/e0M1UDsY/versions/VTg6femX/collective-1.21.1-8.13.jar
 
 # Oritech
-https://cdn.modrinth.com/data/4sYI62kA/versions/vAIUyVvQ/oritech-fabric-1.21.1-0.19.7.jar
+https://cdn.modrinth.com/data/4sYI62kA/versions/Ttqmf9Aj/oritech-fabric-1.21.1-1.0.1.jar
 
 # Refined Storage
-https://cdn.modrinth.com/data/KDvYkUg3/versions/rfFqJDcN/refinedstorage-fabric-2.0.0.jar
+https://cdn.modrinth.com/data/KDvYkUg3/versions/kaB3dfV6/refinedstorage-fabric-2.0.1.jar
 
 # Refined Storage — REI Integration
 https://cdn.modrinth.com/data/RGAJWsc3/versions/LSiWqkiI/refinedstorage-rei-integration-fabric-1.0.0.jar

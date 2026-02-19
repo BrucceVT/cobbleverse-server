@@ -63,8 +63,8 @@ Los siguientes mods están en el servidor y **también deben instalarse en el cl
 | Mod | Versión | Link |
 |-----|---------|------|
 | Collective | 8.13 | [Modrinth](https://modrinth.com/mod/collective) |
-| Oritech | 0.19.7 | [Modrinth](https://modrinth.com/mod/oritech) |
-| Refined Storage | 2.0.0 | [Modrinth](https://modrinth.com/mod/refined-storage) |
+| Oritech | 1.0.1 | [Modrinth](https://modrinth.com/mod/oritech) |
+| Refined Storage | 2.0.1 | [Modrinth](https://modrinth.com/mod/refined-storage) |
 | Refined Storage REI | 1.0.0 | [Modrinth](https://modrinth.com/mod/refinedstorage-rei-integration) |
 | Gacha Machine | 2.0.2 | [Modrinth](https://modrinth.com/mod/gachamachine) |
 | Cobblemon Raid Dens | 0.7.5 | [Modrinth](https://modrinth.com/mod/cobblemon-raid-dens) |
