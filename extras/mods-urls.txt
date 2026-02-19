@@ -1,0 +1,16 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  Cobbleverse — Extra Mods from Direct URLs
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Use this file for mods NOT available on Modrinth.
+# One direct download URL per line (.jar files).
+#
+# Lines starting with # are comments. Blank lines are ignored.
+#
+# IMPORTANT:
+#   - Use only official download URLs (author sites, GitHub releases).
+#   - Never commit .jar files to the repository.
+#   - Pin to specific versions by using versioned URLs.
+# ──────────────────────────────────────────────────────
+
+# Example (uncomment to enable):
+# https://github.com/author/mod/releases/download/v1.0.0/mod-1.0.0.jar

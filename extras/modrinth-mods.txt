@@ -1,0 +1,17 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  Cobbleverse — Extra Mods from Modrinth
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# One project per line. Format:
+#
+#   slug                          → latest compatible release
+#   slug:version_number           → pinned version (recommended)
+#   slug:datapack                 → specific version type
+#   modrinth-project-id           → by project ID
+#
+# Lines starting with # are comments. Blank lines are ignored.
+# ──────────────────────────────────────────────────────
+
+# Example (uncomment to enable):
+# chunky:1.4.16
+# ledger
+# spark:1.10.73
