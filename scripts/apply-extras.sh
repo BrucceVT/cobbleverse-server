@@ -50,25 +50,16 @@ else
   echo "⚠️  No datapack/ found in extras — skipping."
 fi
 
-# ── 3. Xaero Minimap/Worldmap config patching ────
-# Patches everyoneTracksEveryone to true WITHOUT
-# overwriting the rest of the default config.
-XAERO_FILES=("xaerominimap-common.txt" "xaeroworldmap-common.txt")
-for XFILE in "${XAERO_FILES[@]}"; do
-  TARGET="${DATA}/config/${XFILE}"
-  if [ -f "${TARGET}" ]; then
-    if grep -q "everyoneTracksEveryone" "${TARGET}"; then
-      sed -i 's/everyoneTracksEveryone:false/everyoneTracksEveryone:true/' "${TARGET}"
-      echo "🗺️  Patched ${XFILE} → everyoneTracksEveryone:true"
-    else
-      echo "everyoneTracksEveryone:true" >> "${TARGET}"
-      echo "🗺️  Appended everyoneTracksEveryone:true to ${XFILE}"
-    fi
-    APPLIED=$((APPLIED + 1))
-  else
-    echo "⚠️  ${XFILE} not found in ${DATA}/config/ — start server first to generate defaults."
-  fi
-done
+# ── 3. Xaero Minimap/Worldmap config ─────────────
+# Delegates to dedicated script that handles both
+# new (config/xaero/lib/) and legacy config paths.
+SCRIPT_DIR="$(dirname "$0")"
+if [ -x "${SCRIPT_DIR}/apply-xaero-config.sh" ]; then
+  bash "${SCRIPT_DIR}/apply-xaero-config.sh"
+  APPLIED=$((APPLIED + 1))
+else
+  echo "⚠️  apply-xaero-config.sh not found — skipping Xaero config."
+fi
 
 # ── 4. Summary ───────────────────────────────────
 echo ""

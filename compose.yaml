@@ -22,7 +22,7 @@ services:
       MODS_FILE: /extras/mods-urls.txt
 
       # ── Resources ─────────────────────────────
-      MEMORY: ${MEMORY:-4G}
+      MEMORY: ${MEMORY:-16G}
       USE_AIKAR_FLAGS: "true"
 
       # ── Server settings ───────────────────────

@@ -73,7 +73,7 @@ Los siguientes mods están en el servidor y **también deben instalarse en el cl
 | TerraBlender | 4.1.0.8 | [Modrinth](https://modrinth.com/mod/terrablender) |
 | Chipped | 4.0.2 | [Modrinth](https://modrinth.com/mod/chipped) |
 | Cobblemon Alphas | 1.4.1 | [Modrinth](https://modrinth.com/mod/cobblemon-alphas) |
-| CobbleStats | 1.9.2 | [Modrinth](https://modrinth.com/mod/cobblestats) |
+| CobbleStats | 1.8 | [Modrinth](https://modrinth.com/mod/cobblestats) |
 
 > **C2ME** es solo server-side (performance), no se instala en cliente.
 

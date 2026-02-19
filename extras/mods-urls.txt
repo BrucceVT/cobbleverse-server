@@ -41,8 +41,8 @@ https://cdn.modrinth.com/data/BAscRYKm/versions/6h2mVZcb/chipped-fabric-1.21.1-4
 # Cobblemon Alphas
 https://cdn.modrinth.com/data/QnWyhFGf/versions/wVSPSTdd/cobblemonalphas-1.4.1.jar
 
-# CobbleStats
-https://cdn.modrinth.com/data/jlXFcQk4/versions/uxsx4bK4/cobblestats-fabric-1.9.2%2B1.21.1.jar
+# CobbleStats (DISABLED — incompatible with another mod in the pack)
+# https://cdn.modrinth.com/data/jlXFcQk4/versions/RXTZDeTb/cobblestats-fabric-1.8%2B1.21.1.jar
 
 # C2ME (performance)
 https://cdn.modrinth.com/data/VSNURh3q/versions/DSqOVCaF/c2me-fabric-mc1.21.1-0.3.0%2Balpha.0.362.jar
