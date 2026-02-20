@@ -22,7 +22,7 @@ services:
       MODS_FILE: /extras/mods-urls.txt
 
       # ── Resources ─────────────────────────────
-      MEMORY: ${MEMORY:-8G} # 16G for 10+ players, 8G for 5-10 players, 4G for 1-5 players
+      MEMORY: ${MEMORY:-4G} # Fallback if no .env. Set MEMORY in .env (6G local / 12G VPS)
       USE_AIKAR_FLAGS: "true"
 
       # ── Server settings ───────────────────────

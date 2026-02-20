@@ -42,8 +42,9 @@ cobbleverse-server/
 - Imagen: `itzg/minecraft-server:java21`
 - Modpack: URL directa del `.mrpack` (variable `MODPACK_URL`)
 - Mods extra: `MODS_FILE=/extras/mods-urls.txt` (12 URLs activas de Modrinth CDN)
-- Volúmenes: `./data:/data` + `./extras:/extras:ro`
+- Volúmenes: `./data:/data` (persistencia) + `./extras:/extras:ro` (configs)
 - Health check: `mc-health` con 5 min de arranque
+- MEMORY fallback: `4G` si no hay `.env` (configurar siempre en `.env`)
 - Aikar flags habilitados
 
 ### `.env.example`
@@ -228,9 +229,9 @@ cp .env.example .env
 nano .env
 ```
 
-Cambios recomendados:
+Cambios recomendados para VPS 16 GB:
 ```env
-MEMORY=16G
+MEMORY=12G
 RCON_PASSWORD=password-segura-produccion
 OPS=tu_username
 ```
