@@ -27,7 +27,7 @@ chipped
 
 # Performance (server-side only)
 c2me-fabric
-distanthorizons
+distanthorizons:beta
 
 # Skins
 fabrictailor
