@@ -22,7 +22,7 @@ cobblemon-alphas
 
 # World / Utility
 fallingtree
-terrablender
+terrablender:beta
 chipped
 
 # Performance (server-side only)
