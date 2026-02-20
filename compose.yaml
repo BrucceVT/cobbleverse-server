@@ -14,6 +14,48 @@ services:
       # ── Modpack ─────────────────────────────────
       MODRINTH_MODPACK: ${MODPACK_URL}
 
+      # ── Exclude client-only mods (no server) ───
+      MODRINTH_EXCLUDE_FILES: |
+        sodium
+        sodium-extra
+        reeses-sodium-options
+        sodium-options-api
+        iris
+        notenoughanimations
+        better-third-person
+        immediatelyfast
+        entityculling
+        moreculling
+        continuity
+        betterf3
+        modmenu
+        zoomify
+        mouse-tweaks
+        sound-physics-remastered
+        particle-rain
+        music-notification
+        infinite-music
+        controlling
+        better-beds
+        entitytexturefeatures
+        entity-model-features
+        euphoriapatcher
+        custom-splash-screen
+        better-f1-reborn
+        particular
+        tooltipfix
+        advancement-plaques
+        highlight
+        low-fire
+        soundsbegone
+        fancymenu
+        konkrete
+        brb
+        interactic
+        cobblemon-catch-rate-display
+        complementary-unbound
+        iceberg
+
       # ── Resources ───────────────────────────────
       MEMORY: ${MEMORY:-4G}
 
