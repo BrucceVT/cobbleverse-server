@@ -5,7 +5,11 @@
 ### Windows (local)
 1. Instalar [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 2. Abrirlo y esperar a que el motor Docker inicie (icono verde en bandeja)
-3. Git Bash o WSL disponible
+3. **Verificar RAM asignada**: Settings → Resources → Memory
+   - Mínimo: `8 GB` (para `MEMORY=6G` en `.env`)
+   - Recomendado: `12+ GB` (para `MEMORY=8G+`)
+   - La RAM de Docker Desktop **debe ser mayor** que el valor de `MEMORY`
+4. Git Bash o WSL disponible
 
 ### Ubuntu VPS
 ```bash
@@ -25,8 +29,12 @@ docker --version && docker compose version
 # 1. Crear archivo de entorno
 cp .env.example .env
 
-# 2. Editar .env (obligatorio: RCON_PASSWORD, ajustar MEMORY)
-#    MEMORY: 8G para 1-5 jugadores, 16G para 10+
+# 2. Editar .env
+#    OBLIGATORIO: RCON_PASSWORD
+#    AJUSTAR: MEMORY según tu RAM disponible
+#       Docker Desktop 8GB  → MEMORY=6G
+#       Docker Desktop 12GB → MEMORY=8G
+#       VPS 16GB+           → MEMORY=12G
 nano .env   # o: code .env
 
 # 3. Dar permisos a scripts
@@ -37,7 +45,8 @@ chmod +x scripts/*.sh
 
 # 5. Seguir logs hasta ver "Done!"
 ./scripts/logs.sh
-#    Primera vez tarda ~5-10 min (descarga modpack + 12 mods, ~1 GB)
+#    Primera vez: ~5-10 min (descarga modpack + 12 mods, ~1 GB)
+#    Arranques siguientes: ~30-60s (verificación cacheada)
 
 # 6. Aplicar configs, datapacks y parche Xaero
 ./scripts/apply-extras.sh
@@ -52,13 +61,28 @@ chmod +x scripts/*.sh
 ### Operación diaria
 
 ```bash
-./scripts/up.sh                    # Arrancar
-./scripts/down.sh                  # Parar
+./scripts/up.sh                    # Arrancar (~30-60s, verificación cacheada)
+./scripts/down.sh                  # Parar (mundo se guarda automáticamente)
 ./scripts/logs.sh                  # Ver logs (Ctrl+C salir)
 ./scripts/status.sh                # Estado, salud, mods, datapacks
 ./scripts/backup.sh                # Backup comprimido (últimos 5)
 ./scripts/apply-extras.sh          # Re-aplicar configs + datapacks + Xaero
 ./scripts/apply-xaero-config.sh    # Solo parche Xaero (independiente)
+```
+
+### Persistencia de datos
+
+- **Todo persiste** en `./data/` entre reinicios (mundo, mods, configs)
+- `./scripts/down.sh` para el servidor; `./scripts/up.sh` lo reanuda
+- El servidor siempre verifica modpack + mods al arrancar (~30s), pero **no re-descarga** lo que ya tiene
+- Puedes apagar por la noche y encender al día siguiente sin perder nada
+
+### Si cambias compose.yaml o .env
+
+```bash
+# Necesitas recrear el contenedor:
+docker compose down    # (destruye contenedor, datos en ./data/ persisten)
+./scripts/up.sh        # Crea nuevo contenedor con la nueva config
 ```
 
 ### Si cambias configs en extras/
@@ -72,7 +96,6 @@ chmod +x scripts/*.sh
 ### Verificar Xaero
 
 ```bash
-# Confirmar que el parche se aplicó
 grep everyone_tracks data/config/xaero/lib/*.txt
 # Debe mostrar: everyone_tracks_everyone:true
 ```
@@ -122,3 +145,13 @@ docker compose logs | grep -iE "error|fail|crash|incompatible"
 # Verificar datapacks
 ls data/world/datapacks/
 ```
+
+### Errores comunes
+
+| Problema | Causa | Solución |
+|----------|-------|----------|
+| `exitCode: -1` inmediato | JVM no puede asignar RAM | Reducir `MEMORY` en `.env` (debe ser < RAM de Docker) |
+| Puerto 25565 ocupado | Otro proceso usa el puerto | Cambiar `SERVER_PORT` en `.env` |
+| `apply-extras.sh` dice "no world" | Mundo no generado aún | Esperar "Done!" primero |
+| Crash loop (reinicio constante) | Mod incompatible o RAM insuficiente | Ver logs, ajustar MEMORY |
+| API version mismatch | Docker Desktop desactualizado | Reiniciar Docker Desktop o actualizar |

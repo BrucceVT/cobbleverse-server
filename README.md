@@ -51,7 +51,7 @@ cobbleverse-server/
 | Variable              | Default                                          | Descripción                    |
 | --------------------- | ------------------------------------------------ | ------------------------------ |
 | `MODPACK_URL`         | `https://cdn.modrinth.com/.../COBBLEVERSE...`    | URL del `.mrpack`              |
-| `MEMORY`              | `16G`                                            | RAM (compose fallback: `8G`)   |
+| `MEMORY`              | `6G` (local) / `12G+` (VPS)                     | RAM JVM (ver nota abajo)       |
 | `SERVER_PORT`         | `25565`                                          | Puerto de juego                |
 | `RCON_PORT`           | `25575`                                          | Puerto RCON                    |
 | `RCON_PASSWORD`       | *(vacío — configurar obligatorio)*               | Contraseña RCON                |
@@ -63,7 +63,14 @@ cobbleverse-server/
 | `OPS` / `WHITELIST`   | *(vacío)*                                        | Listas de jugadores            |
 | `TZ`                  | `America/Bogota`                                 | Zona horaria                   |
 
-> **Nota MEMORY:** compose tiene fallback `8G`. Para 10+ jugadores usar `16G` en `.env`.
+> **⚠️ MEMORY debe ser menor que la RAM de Docker.** Si Docker Desktop tiene 8 GB → máximo `MEMORY=6G`. Si pones más, el JVM no arranca (`exitCode: -1`).
+>
+> | Entorno               | RAM Docker | `MEMORY` recomendado |
+> |-----------------------|------------|----------------------|
+> | Docker Desktop 8 GB   | ~7.6 GB    | `6G`                 |
+> | Docker Desktop 12 GB  | ~11.6 GB   | `8G`                 |
+> | VPS 16 GB             | ~15.5 GB   | `12G`                |
+> | VPS 32 GB             | ~31 GB     | `16G`                |
 
 ### `extras/mods-urls.txt`
 
@@ -89,8 +96,8 @@ cobbleverse-server/
 
 | Script                  | Función                                                |
 | ----------------------- | ------------------------------------------------------ |
-| `up.sh`                 | `docker compose up -d`                                 |
-| `down.sh`               | `docker compose down`                                  |
+| `up.sh`                 | Arrancar servidor (`docker compose up -d`)             |
+| `down.sh`               | Parar servidor (`docker compose stop`)                 |
 | `logs.sh`               | `docker compose logs -f --tail=N`                      |
 | `status.sh`             | Contenedor + salud + recursos + mods + datapacks       |
 | `backup.sh`             | Backup `tar.gz` con RCON save-off y rotación (5)       |
@@ -104,6 +111,7 @@ cobbleverse-server/
 ### Prerrequisitos
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo
+- **Verificar RAM asignada**: Settings → Resources → Memory ≥ 8 GB
 - Git Bash o WSL
 
 ### Pasos
@@ -146,7 +154,10 @@ grep everyone_tracks data/config/xaero/lib/*.txt
 | `apply-extras.sh` dice "no world"  | Esperar a que el server genere el mundo primero    |
 | Mod no se descargó                 | Verificar URL en `extras/mods-urls.txt`           |
 | Out of memory                      | Ajustar `MEMORY` en `.env`                        |
+| `exitCode: -1` inmediato           | `MEMORY` > RAM de Docker → reducir `MEMORY`       |
+| Crash loop (reinicia cada ~45s)    | Verificar RAM o mod incompatible en logs          |
 | Xaero config not found             | Iniciar el server primero para generar defaults   |
+| Re-init cada arranque (~30s)       | Normal — itzg verifica modpack/mods (cacheado)    |
 
 ---
 
