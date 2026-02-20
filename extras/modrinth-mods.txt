@@ -26,7 +26,7 @@ terrablender
 chipped
 
 # Performance (server-side only)
-c2me-fabric
+c2me-fabric:alpha
 distanthorizons:beta
 
 # Skins
