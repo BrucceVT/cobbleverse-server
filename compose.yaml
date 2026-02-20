@@ -56,6 +56,11 @@ services:
         complementary-unbound
         iceberg
 
+      # ── Disable mods/datapacks from modpack ─────
+      MODRINTH_OVERRIDES_EXCLUSIONS: |
+        mods/MobsBeGone-*.jar
+        **/COBBLEVERSE - No Hunger.zip
+
       # ── Resources ───────────────────────────────
       MEMORY: ${MEMORY:-4G}
 

@@ -10,7 +10,8 @@ ENV EULA=TRUE \
     VERSION=LATEST \
     USE_AIKAR_FLAGS=true \
     TZ=UTC \
-    MODS_FILE=/extras/mods-urls.txt
+    MODRINTH_PROJECTS="@/extras/modrinth-mods.txt" \
+    MODRINTH_DOWNLOAD_DEPENDENCIES=required
 
 # Exponer puertos (documentación, no los publica automáticamente)
 EXPOSE 25565 25575

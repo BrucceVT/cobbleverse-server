@@ -1,0 +1,36 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  Cobbleverse — Extra Server Mods (Modrinth Slugs)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Format: slug or slug:version or slug:release_type
+# itzg auto-downloads the latest compatible version.
+# Lines starting with # are comments. Blank lines ignored.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Libraries
+collective
+
+# Tech / Storage
+oritech
+refined-storage
+refinedstorage-rei-integration
+
+# Cobblemon addons
+cobblemon-raid-dens
+cobbledgacha
+gachamachine
+cobblemon-alphas
+
+# World / Utility
+fallingtree
+terrablender
+chipped
+
+# Performance (server-side only)
+c2me-fabric
+distant-horizons
+
+# Skins
+fabrictailor
+
+# DISABLED — incompatible
+# cobblestats
