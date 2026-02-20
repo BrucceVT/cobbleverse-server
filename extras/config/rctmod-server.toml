@@ -1,0 +1,21 @@
+# Radical Cobblemon Trainers — Server Config
+# https://srcmc.gitlab.io/rct/docs/0.13/configuration/server_config/
+
+globalSpawnChance = 0.85
+globalSpawnChanceMinimum = 0.15
+spawnIntervalTicks = 120
+spawnIntervalTicksMaximum = 800
+minHorizontalDistanceToPlayers = 25
+maxHorizontalDistanceToPlayers = 70
+maxVerticalDistanceToPlayers = 30
+maxTrainersPerPlayer = 12
+maxTrainersTotal = 60
+maxLevelDiff = 25
+dimensionBlacklist = []
+dimensionWhitelist = []
+biomeTagBlacklist = []
+biomeTagWhitelist = []
+initialLevelCap = 15
+additiveLevelCapRequirement = 0
+allowOverLeveling = false
+logSpawning = false
