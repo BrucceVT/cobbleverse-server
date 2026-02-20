@@ -12,12 +12,12 @@ collective
 # Tech / Storage
 oritech
 refined-storage
-refinedstorage-rei-integration
+refined-storage-rei-integration
 
 # Cobblemon addons
-cobblemon-raid-dens
+cobblemonraiddens
 cobbledgacha
-gachamachine
+bloos-gacha-machine
 cobblemon-alphas
 
 # World / Utility
@@ -27,7 +27,7 @@ chipped
 
 # Performance (server-side only)
 c2me-fabric
-distant-horizons
+distanthorizons
 
 # Skins
 fabrictailor
