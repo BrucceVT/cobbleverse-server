@@ -59,6 +59,7 @@ services:
       # ── Disable mods/datapacks from modpack ─────
       MODRINTH_OVERRIDES_EXCLUSIONS: |
         mods/MobsBeGone-*.jar
+        mods/soundsbegone-*.jar
         **/COBBLEVERSE - No Hunger.zip
 
       # ── Resources ───────────────────────────────
