@@ -69,8 +69,8 @@ services:
       MODE: ${MODE:-survival}
       MAX_PLAYERS: ${MAX_PLAYERS:-20}
       MOTD: ${MOTD:-§6Cobbleverse §7— §aCatch them all!}
-      VIEW_DISTANCE: "10"
-      SIMULATION_DISTANCE: "8"
+      VIEW_DISTANCE: ${VIEW_DISTANCE:-10}
+      SIMULATION_DISTANCE: ${SIMULATION_DISTANCE:-8}
       SEED: ${SEED:-}
       LEVEL: ${LEVEL:-world}
       ONLINE_MODE: ${ONLINE_MODE:-true}
