@@ -91,6 +91,7 @@ services:
     volumes:
       - cobbleverse_data:/data
       - ./extras:/extras:ro
+      - ./scripts:/scripts:ro
       # itzg auto-copies /config → /data/config/
       - ./extras/config:/config:ro
       # itzg automatically executes all scripts in init.d on startup
