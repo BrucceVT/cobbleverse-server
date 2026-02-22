@@ -25,12 +25,14 @@ cobblemon-alphas
 fallingtree
 terrablender:beta
 chipped
+universal-graves
 
 # Performance (server-side only)
 c2me-fabric:alpha
 # distanthorizons:beta
 chunky
 noisium
+servercore
 
 # Skins
 fabrictailor
