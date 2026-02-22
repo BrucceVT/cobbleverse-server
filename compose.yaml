@@ -88,9 +88,12 @@ services:
       TZ: ${TZ:-UTC}
 
     volumes:
-      - ./data:/data
+      - cobbleverse_data:/data
       - ./extras:/extras:ro
       # itzg auto-copies /config → /data/config/
       - ./extras/config:/config:ro
       # itzg automatically executes all scripts in init.d on startup
       - ./init.d:/itzg/init.d:ro
+
+volumes:
+  cobbleverse_data:
