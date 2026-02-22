@@ -62,6 +62,7 @@ services:
         mods/MobsBeGone-*.jar
         mods/soundsbegone-*.jar
         **/COBBLEVERSE - No Hunger.zip
+        config/cobblemon/main.json
 
       # ── Resources ───────────────────────────────
       MEMORY: ${MEMORY:-4G}
