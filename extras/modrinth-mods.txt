@@ -35,8 +35,8 @@ noisium
 fabrictailor
 
 # QoL Multiplayer
-tab
-open-parties-and-claims
+tab-was-taken
+open-parties-and-claims:beta
 
 # DISABLED — incompatible
 # cobblestats
