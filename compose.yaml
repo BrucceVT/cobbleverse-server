@@ -55,6 +55,7 @@ services:
         cobblemon-catch-rate-display
         complementary-unbound
         iceberg
+        MobsBeGone
 
       # ── Disable mods/datapacks from modpack ─────
       MODRINTH_OVERRIDES_EXCLUSIONS: |
