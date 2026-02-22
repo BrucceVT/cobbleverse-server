@@ -1,0 +1,65 @@
+# https://github.com/NEZNAMY/TAB/wiki
+
+scoreboard-teams:
+  enabled: true
+  enable-collision: true
+  invisible-nametags: false
+  anti-override: true
+  sorting-types:
+    - "GROUPS:owner,admin,moderator,player"
+    - "PLACEHOLDER_A_TO_Z:%player%"
+  case-sensitive-sorting: true
+  can-see-friendly-invisibles: false
+  disable-condition: "%world%=disabledworld"
+
+tablist-name-formatting:
+  enabled: true
+  anti-override: true
+  disable-condition: "%world%=disabledworld"
+
+header-footer:
+  enabled: true
+  disable-condition: "%world%=disabledworld"
+  header:
+    - ""
+    - "&6&lCobbleverse"
+    - "&eJugadores en linea: &f%online%"
+    - ""
+  footer:
+    - ""
+    - "&7Ping: &a%ping% ms"
+    - ""
+
+ping-spoof:
+  enabled: false
+
+placeholder-output-replacements:
+  "%ping%":
+    "0": "&a0"
+    "1": "&a1"
+    "2": "&a2"
+
+placeholders:
+  date-format: "dd.MM.yyyy"
+  time-format: "[HH:mm:ss / h:mm a]"
+  time-offset: 0
+
+# The standard `%ping%` placeholder will be available via TAB.
+# Below-name and tab-suffix for ping:
+classic-vanilla-belowname:
+  enabled: false
+
+belowname-objective:
+  enabled: true
+  number: "%ping%"
+  text: "&ems"
+  disable-condition: "%world%=disabledworld"  
+
+playerlist-objective:
+  enabled: true
+  value: "%ping%"
+  disable-condition: "%world%=disabledworld"
+  fancy-value: "&7Ping: %ping% ms"
+
+# Config version
+config-version: 4
