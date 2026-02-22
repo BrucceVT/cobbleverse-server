@@ -19,19 +19,36 @@ mkdir -p "${BACKUP_DIR}"
 echo "📦 Creating backup: ${FILENAME}"
 echo "   This may take a moment..."
 
+# 1. Dynamically find the running Minecraft container id/name (Dokploy changes names)
+MC_CONTAINER=$(docker ps -q --filter "ancestor=itzg/minecraft-server" | head -n 1)
+
+if [ -z "${MC_CONTAINER}" ]; then
+  echo "❌ Error: Could not find a running Minecraft container (itzg/minecraft-server)."
+  echo "   Please start the server first."
+  exit 1
+fi
+
+# 2. Find the exact volume name attached to /data inside that container
+VOLUME_NAME=$(docker inspect "${MC_CONTAINER}" -f '{{ range .Mounts }}{{ if eq .Destination "/data" }}{{ .Name }}{{ end }}{{ end }}')
+
+if [ -z "${VOLUME_NAME}" ]; then
+  echo "❌ Error: Could not determine the volume mounted to /data."
+  exit 1
+fi
+
 # Pause auto-save if server is running (best-effort)
-docker exec mc rcon-cli save-off 2>/dev/null || true
-docker exec mc rcon-cli save-all 2>/dev/null || true
+docker exec "${MC_CONTAINER}" rcon-cli save-off 2>/dev/null || true
+docker exec "${MC_CONTAINER}" rcon-cli save-all 2>/dev/null || true
 sleep 2
 
-# We use an alpine container to mount the named volume and tar its contents
+# We use an alpine container to mount the exact named volume and tar its contents
 docker run --rm \
   -v "${VOLUME_NAME}:/data:ro" \
   -v "$(pwd)/${BACKUP_DIR}:/backup" \
   alpine tar -czf "/backup/${FILENAME}" -C /data .
 
 # Resume auto-save
-docker exec mc rcon-cli save-on 2>/dev/null || true
+docker exec "${MC_CONTAINER}" rcon-cli save-on 2>/dev/null || true
 
 # Prune old backups
 cd "${BACKUP_DIR}"
