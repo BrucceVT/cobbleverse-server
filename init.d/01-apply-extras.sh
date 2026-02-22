@@ -48,6 +48,13 @@ else
   echo "⚠️  No datapack/ found in extras — skipping."
 fi
 
+# ── 3. Server Icon ─────────────────────────────────
+if [ -f "${EXTRAS}/server-icon.png" ]; then
+  echo "🖼️  Applying server icon → ${DATA}/server-icon.png"
+  cp "${EXTRAS}/server-icon.png" "${DATA}/server-icon.png"
+  APPLIED=$((APPLIED + 1))
+fi
+
 # ── 4. Summary ───────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════"
