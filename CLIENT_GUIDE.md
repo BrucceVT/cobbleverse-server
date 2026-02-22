@@ -49,11 +49,12 @@ El servidor cuenta con contenido adicional que no viene en el modpack por defect
 *   **[Gacha Machine](https://modrinth.com/mod/gachamachine)** (Máquinas de cápsulas)
 *   **[Cobbled Gacha](https://modrinth.com/mod/cobbledgacha)** (Cápsulas compatibles con Pokémon)
 
-### 🗺️ Interacción y Clanes (Opcional pero recomendado)
+### 🗺️ Interacción, Visuales y Clanes (Altamente recomendado)
+*   **[Distant Horizons](https://modrinth.com/mod/distanthorizons)** (Para poder ver el mundo infinitamente a lo lejos sin lag. Asegúrate de bajar una versión "Beta" para 1.21.1)
 *   **[Open Parties and Claims](https://modrinth.com/mod/open-parties-and-claims)** (Para poder crear grupos y ver infinitamente a tus amigos en el minimapa de Xaero)
 *   **[Fabric Tailor](https://modrinth.com/mod/fabrictailor)** (Para poder cambiar tu skin directamente dentro del servidor)
 
-*(Nota: Los mods como `C2ME` o `TAB` no necesitas descargarlos, ya que son exclusivos del lado del servidor).*
+*(Nota: Los mods como `C2ME`, `Chunky` o `TAB` no necesitas descargarlos, ya que son exclusivos del lado del servidor).*
 
 ---
 
