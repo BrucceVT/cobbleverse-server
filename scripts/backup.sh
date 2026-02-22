@@ -12,30 +12,30 @@ KEEP=${1:-5}
 BACKUP_DIR="./backups"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 FILENAME="cobbleverse_backup_${TIMESTAMP}.tar.gz"
+VOLUME_NAME="cobbleverse_data"
 
 mkdir -p "${BACKUP_DIR}"
-
-if [ ! -d "./data" ] || [ -z "$(ls -A ./data 2>/dev/null)" ]; then
-  echo "❌ No data to backup. Start the server at least once first."
-  exit 1
-fi
 
 echo "📦 Creating backup: ${FILENAME}"
 echo "   This may take a moment..."
 
 # Pause auto-save if server is running (best-effort)
-docker compose exec -T mc rcon-cli save-off 2>/dev/null || true
-docker compose exec -T mc rcon-cli save-all 2>/dev/null || true
+docker exec mc rcon-cli save-off 2>/dev/null || true
+docker exec mc rcon-cli save-all 2>/dev/null || true
 sleep 2
 
-tar -czf "${BACKUP_DIR}/${FILENAME}" ./data
+# We use an alpine container to mount the named volume and tar its contents
+docker run --rm \
+  -v "${VOLUME_NAME}:/data:ro" \
+  -v "$(pwd)/${BACKUP_DIR}:/backup" \
+  alpine tar -czf "/backup/${FILENAME}" -C /data .
 
 # Resume auto-save
-docker compose exec -T mc rcon-cli save-on 2>/dev/null || true
+docker exec mc rcon-cli save-on 2>/dev/null || true
 
 # Prune old backups
 cd "${BACKUP_DIR}"
-TOTAL=$(ls -1t cobbleverse_backup_*.tar.gz 2>/dev/null | wc -l)
+TOTAL=$(ls -1t cobbleverse_backup_*.tar.gz 2>/dev/null | wc -l || echo 0)
 if [ "${TOTAL}" -gt "${KEEP}" ]; then
   DELETE_COUNT=$((TOTAL - KEEP))
   ls -1t cobbleverse_backup_*.tar.gz | tail -n "${DELETE_COUNT}" | xargs rm -f
