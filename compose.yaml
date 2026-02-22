@@ -77,6 +77,7 @@ services:
       SEED: ${SEED:-}
       LEVEL: ${LEVEL:-world}
       ONLINE_MODE: ${ONLINE_MODE:-true}
+      ICON: /extras/server-icon.png
 
       # ── RCON ────────────────────────────────────
       ENABLE_RCON: ${ENABLE_RCON:-true}
