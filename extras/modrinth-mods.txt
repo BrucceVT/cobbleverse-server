@@ -8,7 +8,7 @@
 
 # Libraries
 collective
-jei
+jei:beta
 
 # Tech / Storage
 oritech
