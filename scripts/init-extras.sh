@@ -17,6 +17,9 @@ echo "[init-extras] Applying extras, datapacks and Xaero config..."
 
 if [ -x /scripts/apply-extras.sh ]; then
   bash /scripts/apply-extras.sh
+  
+  echo "[init-extras] Launching auto-setup-regions in background..."
+  bash /scripts/auto-setup-regions.sh &
 else
   echo "[init-extras] ⚠️  /scripts/apply-extras.sh not found"
 fi
