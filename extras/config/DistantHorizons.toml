@@ -566,7 +566,7 @@ _version = 3
 				# Note:
 				# Some DH settings will be disabled and/or changed to improve 
 				# visuals when DH rendering is disabled.
-				ignoredDimensionCsv = ""
+				ignoredDimensionCsv = "cobblemonraiddens:raid_dimension,lumymon:nightmare,lumymon:origin,legendarymonuments:distortion_world"
 				#
 				# This is the earth size ratio when applying the curvature shader effect. 
 				# Note: Enabling this feature may cause rendering bugs. 
