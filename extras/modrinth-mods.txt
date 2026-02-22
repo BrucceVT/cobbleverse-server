@@ -8,6 +8,7 @@
 
 # Libraries
 collective
+jei
 
 # Tech / Storage
 oritech
