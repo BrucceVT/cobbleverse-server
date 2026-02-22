@@ -9,10 +9,8 @@
 # Safe to re-run.
 # ──────────────────────────────────────────────────
 set -euo pipefail
-cd "$(dirname "$0")/.."
-
-EXTRAS="./extras"
-DATA="./data"
+EXTRAS="/extras"
+DATA="/data"
 
 # ── Validate ─────────────────────────────────────
 if [ ! -d "${DATA}" ]; then
@@ -48,17 +46,6 @@ if [ -d "${EXTRAS}/datapack" ]; then
   fi
 else
   echo "⚠️  No datapack/ found in extras — skipping."
-fi
-
-# ── 3. Xaero Minimap/Worldmap config ─────────────
-# Delegates to dedicated script that handles both
-# new (config/xaero/lib/) and legacy config paths.
-SCRIPT_DIR="$(dirname "$0")"
-if [ -x "${SCRIPT_DIR}/apply-xaero-config.sh" ]; then
-  bash "${SCRIPT_DIR}/apply-xaero-config.sh"
-  APPLIED=$((APPLIED + 1))
-else
-  echo "⚠️  apply-xaero-config.sh not found — skipping Xaero config."
 fi
 
 # ── 4. Summary ───────────────────────────────────

@@ -48,27 +48,22 @@ chmod +x scripts/*.sh
 #    Primera vez: ~5-10 min (descarga modpack + 12 mods, ~1 GB)
 #    Arranques siguientes: ~30-60s (verificación cacheada)
 
-# 6. Aplicar configs, datapacks y parche Xaero
-./scripts/apply-extras.sh
+# 6. Esperar parche automático (init.d)
 #    → Copia extras/config/ a data/config/
 #    → Copia extras/datapack/ a data/world/datapacks/
-#    → Parchea everyone_tracks_everyone:true en Xaero
+#    → Parchea OPAC y Xaero automáticamente
+#    (El servidor se encarga de esto mientras arranca)
 
-# 7. Reiniciar para que carguen los cambios
-./scripts/down.sh && ./scripts/up.sh
+# 7. ¡Listo para jugar!
 ```
 
 ### Operación diaria
 
-```bash
 ./scripts/up.sh                    # Arrancar (~30-60s, verificación cacheada)
 ./scripts/down.sh                  # Parar (mundo se guarda automáticamente)
 ./scripts/logs.sh                  # Ver logs (Ctrl+C salir)
 ./scripts/status.sh                # Estado, salud, mods, datapacks
 ./scripts/backup.sh                # Backup comprimido (últimos 5)
-./scripts/apply-extras.sh          # Re-aplicar configs + datapacks + Xaero
-./scripts/apply-xaero-config.sh    # Solo parche Xaero (independiente)
-```
 
 ### Persistencia de datos
 
@@ -89,8 +84,8 @@ docker compose down    # (destruye contenedor, datos en ./data/ persisten)
 
 ```bash
 ./scripts/down.sh
-./scripts/apply-extras.sh
 ./scripts/up.sh
+# El contenedor detectará el arranque y copiará los cambios usando init.d
 ```
 
 ### Verificar Xaero
@@ -152,6 +147,5 @@ ls data/world/datapacks/
 |----------|-------|----------|
 | `exitCode: -1` inmediato | JVM no puede asignar RAM | Reducir `MEMORY` en `.env` (debe ser < RAM de Docker) |
 | Puerto 25565 ocupado | Otro proceso usa el puerto | Cambiar `SERVER_PORT` en `.env` |
-| `apply-extras.sh` dice "no world" | Mundo no generado aún | Esperar "Done!" primero |
 | Crash loop (reinicio constante) | Mod incompatible o RAM insuficiente | Ver logs, ajustar MEMORY |
 | API version mismatch | Docker Desktop desactualizado | Reiniciar Docker Desktop o actualizar |

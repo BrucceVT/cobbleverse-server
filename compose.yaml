@@ -92,7 +92,5 @@ services:
       - ./extras:/extras:ro
       # itzg auto-copies /config → /data/config/
       - ./extras/config:/config:ro
-      # scripts disponibles dentro del contenedor
-      - ./scripts:/scripts:ro
-      # itzg ejecuta init.d antes de arrancar el server
-      - ./scripts/init-extras.sh:/itzg/init.d/init-extras.sh:ro
+      # itzg automatically executes all scripts in init.d on startup
+      - ./init.d:/itzg/init.d:ro

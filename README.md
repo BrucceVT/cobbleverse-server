@@ -20,14 +20,18 @@ cobbleverse-server/
 │   ├── config/                    ← Configs del modpack (cobblemonraiddens, FancyMenu, etc.)
 │   └── datapack/                  ← Datapacks .zip
 │
+├── init.d/
+│   ├── 01-apply-extras.sh         ← Copia config/ y datapacks a ./data
+│   ├── 02-xaero-config.sh         ← Parchea Xaero (everyone_tracks_everyone)
+│   └── 03-auto-setup-regions.sh   ← Dispara generación de regiones
+│
 ├── scripts/
 │   ├── up.sh                      ← Arranca el servidor
 │   ├── down.sh                    ← Para el servidor
 │   ├── logs.sh                    ← Logs en tiempo real
 │   ├── status.sh                  ← Estado, salud, recursos, mods, datapacks
-│   ├── backup.sh                  ← Backup comprimido con rotación
-│   ├── apply-extras.sh            ← Copia config/ y datapacks a ./data
-│   └── apply-xaero-config.sh     ← Parchea Xaero (everyone_tracks_everyone)
+│   ├── setup-regions.sh           ← Genera estructuras Cobbleverse
+│   └── backup.sh                  ← Backup comprimido con rotación
 │
 ├── data/                          ← Datos del servidor (persisten)
 └── backups/                       ← Backups generados
@@ -102,8 +106,7 @@ cobbleverse-server/
 | `logs.sh`               | `docker compose logs -f --tail=N`                      |
 | `status.sh`             | Contenedor + salud + recursos + mods + datapacks       |
 | `backup.sh`             | Backup `tar.gz` con RCON save-off y rotación (5)       |
-| `apply-extras.sh`       | Copia configs + datapacks + parchea Xaero              |
-| `apply-xaero-config.sh` | Parchea `everyone_tracks_everyone:true` en Xaero       |
+| `setup-regions.sh`      | Gatillar estructuración (Kanto..Sinnoh) manual         |
 
 ---
 
@@ -131,15 +134,10 @@ docker compose config
 # 4. Arrancar el servidor
 ./scripts/up.sh
 ./scripts/logs.sh
-# Esperar "Done!" (~5-10 min primera vez, descarga ~1 GB)
+# 5. Esperar "Done!" (~5-10 min primera vez, descarga ~1 GB)
+#    (configs y datapacks se aplicarán automáticamente via init.d)
 
-# 5. Aplicar configs, datapacks y Xaero
-./scripts/apply-extras.sh
-
-# 6. Reiniciar para cargar cambios
-./scripts/down.sh && ./scripts/up.sh
-
-# 7. Verificar
+# 6. Verificar
 ./scripts/status.sh
 ls data/world/datapacks/
 grep everyone_tracks data/config/xaero/lib/*.txt
@@ -152,7 +150,6 @@ grep everyone_tracks data/config/xaero/lib/*.txt
 | ---------------------------------- | ------------------------------------------------- |
 | Puerto 25565 ocupado               | Cambiar `SERVER_PORT` en `.env`                   |
 | Descarga lenta la primera vez      | Normal (~1 GB entre modpack + mods)               |
-| `apply-extras.sh` dice "no world"  | Esperar a que el server genere el mundo primero    |
 | Mod no se descargó                 | Verificar URL en `extras/mods-urls.txt`           |
 | Out of memory                      | Ajustar `MEMORY` en `.env`                        |
 | `exitCode: -1` inmediato           | `MEMORY` > RAM de Docker → reducir `MEMORY`       |
@@ -174,7 +171,8 @@ grep everyone_tracks data/config/xaero/lib/*.txt
 | `README.md`       | Guía                            |
 | `SETUP.md`        | Instrucciones rápidas           |
 | `extras/`         | Mods URLs + configs + datapacks |
-| `scripts/`        | Comandos operativos             |
+| `init.d/`         | Scripts internos del contenedor |
+| `scripts/`        | Scripts host comandos operativos|
 
 ### NO se copian
 
@@ -250,16 +248,9 @@ chmod +x scripts/*.sh
 ./scripts/up.sh
 ./scripts/logs.sh
 # Esperar "Done!"
-```
+# (init.d copiará configs y datapacks automáticamente)
 
-### 6. Aplicar extras
-
-```bash
-./scripts/apply-extras.sh
-./scripts/down.sh && ./scripts/up.sh
-```
-
-### 7. Verificar
+### 6. Verificar
 
 ```bash
 ./scripts/status.sh
@@ -323,10 +314,8 @@ Los 12 mods extra activos del servidor (excepto C2ME) también deben instalarse 
 
 ### Xaero's Minimap/World Map
 
-La opción `everyone_tracks_everyone:true` se aplica automáticamente via `apply-extras.sh` → `apply-xaero-config.sh`:
-- Ubicación nueva: `data/config/xaero/lib/*.txt`
-- Ubicación legacy: `data/config/xaerominimap-common.txt` / `xaeroworldmap-common.txt`
-- El script es idempotente y maneja ambas ubicaciones.
+La opción `everyone_tracks_everyone:true` y `playerLocationVisibility="GLOBAL"` se aplican automáticamente en cada arranque vía `init.d/02-xaero-config.sh`:
+- Ubicación nueva: `data/config/xaero/lib/*.txt` (y config de OPAC)
 
 ### Diagnosticar conflictos en logs
 

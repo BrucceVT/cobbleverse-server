@@ -10,9 +10,7 @@
 # Idempotent — safe to run multiple times.
 # ──────────────────────────────────────────────────
 set -euo pipefail
-cd "$(dirname "$0")/.."
-
-DATA="./data"
+DATA="/data"
 XAERO_LIB_DIR="${DATA}/config/xaero/lib"
 PROPERTY="everyone_tracks_everyone"
 VALUE="true"
