@@ -79,31 +79,6 @@ services:
       # ── Resources ───────────────────────────────────
       MEMORY: ${MEMORY:-8G}
 
-      # ── JVM tuning for 4-core / 16GB host ──────────
-      # ActiveProcessorCount tells JVM the real core count (Docker can misreport)
-      # G1 tuning reduces GC pauses that cause tick lag
-      JVM_XX_OPTS: >-
-        -XX:ActiveProcessorCount=4
-        -XX:+UseG1GC
-        -XX:+ParallelRefProcEnabled
-        -XX:MaxGCPauseMillis=130
-        -XX:+UnlockExperimentalVMOptions
-        -XX:+DisableExplicitGC
-        -XX:+AlwaysPreTouch
-        -XX:G1NewSizePercent=30
-        -XX:G1MaxNewSizePercent=40
-        -XX:G1HeapRegionSize=8M
-        -XX:G1ReservePercent=20
-        -XX:G1MixedGCCountTarget=4
-        -XX:InitiatingHeapOccupancyPercent=15
-        -XX:G1MixedGCLiveThresholdPercent=90
-        -XX:G1RSetUpdatingPauseTimePercent=5
-        -XX:SurvivorRatio=32
-        -XX:+PerfDisableSharedMem
-        -XX:MaxTenuringThreshold=1
-        -Dusing.aikars.flags=https://mcflags.emc.gs
-        -Daikars.new.flags=true
-
       # ── Server settings ─────────────────────────────
       DIFFICULTY: ${DIFFICULTY:-normal}
       MODE: ${MODE:-survival}
