@@ -33,6 +33,7 @@ c2me-fabric:alpha
 chunky
 noisium
 servercore
+spark
 
 # Skins
 fabrictailor
