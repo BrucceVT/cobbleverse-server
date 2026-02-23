@@ -33,9 +33,13 @@ c2me-fabric:alpha
 chunky
 noisium
 servercore
+<<<<<<< HEAD
 cobblemonoptimizer
 cobblemonchunkmenager
 cobblestacker
+=======
+spark
+>>>>>>> 0fc2fab7269bf0d4d1b0f2dd86090386b62a7f4e
 
 # Skins
 fabrictailor
