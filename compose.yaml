@@ -11,15 +11,16 @@ services:
       - "${SERVER_PORT:-25565}:25565"
       - "${RCON_PORT:-25575}:25575"
 
-    # ── Resource limits (prevents container from starving the host) ──
+    # ── Resource limits (Multi-Tenancy) ──────────────
+    # Avoid using 'cpus' limits for Minecraft. Fractional CPUs cause the Linux 
+    # kernel (CFS) to micro-pause the container, massacring TPS.
+    # Instead, we strictly bound the Memory so your web-apps never crash from OOM.
     deploy:
       resources:
         limits:
-          cpus: "3.5"
-          memory: 14G
+          memory: 11G
         reservations:
-          cpus: "2"
-          memory: 10G
+          memory: 8.5G
 
     environment:
       # ── Modpack ─────────────────────────────────────
